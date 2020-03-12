@@ -1,5 +1,8 @@
 // shadow sbt-scalajs' crossProject and CrossType from Scala.js 0.6.x
 import java.nio.file.Paths
+
+import sbt.Keys.organization
+
 import scala.sys.process._
 import sbtcrossproject.CrossPlugin.autoImport.{CrossType, crossProject}
 
