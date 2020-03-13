@@ -1,6 +1,5 @@
 package bon.jo
 
-import bon.jo.game.Const
 import bon.jo.game.html.Template
 import bon.jo.html.DomShell.{$, inputXml}
 import bon.jo.html.OnClick
@@ -19,7 +18,7 @@ class TestSocketTemplate extends Template {
   }
 
   override def body: String = <div id="msg" class="container">
-    {inputXml("url", "url", Const.urlCardGame)}{inputXml("send", "envoi")}<div id="submit">
+    {inputXml("url", "url", "Const.urlCardGame")}{inputXml("send", "envoi")}<div id="submit">
 
     </div>
     <div>
