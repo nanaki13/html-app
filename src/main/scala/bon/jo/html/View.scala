@@ -18,27 +18,31 @@ trait _View[Root <: HTMLElement] extends IdView{
   def toElementBase(n: NodeBuffer): HTMLCollection =  BridgeXmlHtml.toElementBase(n)
   def html(): Root
 }
-trait NodeView[Root <: HTMLElement] extends InDom with _View[Root]{
+trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root]{
 
-  val inDoms = mutable.ListBuffer[InDom]()
+  val inDoms = mutable.ListBuffer[InDom[_]]()
 
 
 
   def addTo(id: String): Unit = {
-    $[HTMLElement](id).appendChild(html())
-    updateView()
+    val parent =  $[HTMLElement](id)
+    parent.appendChild(html())
+    init(parent)
   }
 
   def addTo(el: HTMLElement): Unit = {
     el.appendChild(html())
-    updateView()
+    init(el)
   }
-  def add[T <: InDom](inDom : T):T ={
+  def add[T <: InDom[_]](inDom : T):T ={
     inDoms += inDom
     inDom
   }
 
-  final override def updateView(): Unit = inDoms.foreach(_.updateView())
+   override def init(parent : HTMLElement): Unit = {
+    inDoms.foreach(_.init(me))
+
+  }
 }
 abstract case class View[Root <: HTMLElement](html : Root) extends LeaveView[Root] {
 
@@ -50,17 +54,19 @@ abstract case class XmlView[Root <: HTMLElement](xml : Node) extends LeaveView[R
 
   override def html(): Root = BridgeXmlHtml.toElement(xml)
 }
-trait LeaveView[Root <: HTMLElement] extends InDom with _View[Root] with IdView {
+trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with IdView {
 
   def html(): Root
   def addTo(id: String): Unit = {
-    $[HTMLElement](id).appendChild(html())
-    updateView()
+    val parent =  $[HTMLElement](id)
+    parent.appendChild(html())
+    init(parent)
   }
   def addTo(el: HTMLElement): Unit = {
     el.appendChild(html())
-    updateView()
+    init(el)
   }
+  override def updateView(): Unit = {}
 
 }
 

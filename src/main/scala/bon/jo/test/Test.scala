@@ -4,6 +4,7 @@ import bon.jo.app.HtmlApp
 import bon.jo.game.html.Template
 import bon.jo.game.html.Template.XmlTemplate
 import org.scalajs.dom.html.Div
+import org.scalajs.dom.raw.HTMLElement
 
 import scala.xml.Node
 
@@ -25,5 +26,6 @@ class Test(app: Div, template: Template) extends HtmlApp[Test](app: Div, templat
 
   }
 
+  override def init(p  :HTMLElement): Unit = ???
 }
 

@@ -24,9 +24,9 @@ trait AppLoader{
     val templateFact = confo.templateFactory
     val template = templateFact()
     element.innerHTML = template.body
-    val appDiv: Div = $("root")
+    val appDiv: Div = $(template.id)
     val ret = htmlFact(appDiv, template)
-    template.updateView()
+    template.init(appDiv)
     ret
   }
 

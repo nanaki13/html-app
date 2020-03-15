@@ -1,9 +1,10 @@
 package bon.jo
 
 import bon.jo.game.html.Template
+import bon.jo.html.ButtonHtml
 import bon.jo.html.DomShell.{$, inputXml}
-import bon.jo.html.OnClick
 import org.scalajs.dom.html.{Div, Input}
+import org.scalajs.dom.raw.HTMLElement
 
 class TestSocketTemplate extends Template {
   var msg: Div = _
@@ -28,7 +29,7 @@ class TestSocketTemplate extends Template {
     </div>
   </div>.mkString
 
-  val myButton = OnClick("send-button", "Envoi")
+  val myButton = ButtonHtml("send-button", "Envoi")
 
 
   def msg(str: String): Unit = {
@@ -40,4 +41,6 @@ class TestSocketTemplate extends Template {
   def getParam(): Param = {
     Param(urlInput.value, sendInput.value)
   }
+
+  override def init(parent : HTMLElement): Unit = {}
 }
