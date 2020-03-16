@@ -6,6 +6,6 @@ trait InDom[Me <: HTMLElement]{
   _ : IdView =>
   lazy val me = DomShell.$[Me](id)
 
-  def updateView()
+  def updateView(){}
   def init(parent : HTMLElement)
 }

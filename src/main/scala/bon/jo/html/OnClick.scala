@@ -1,31 +1,37 @@
 package bon.jo.html
 
 import bon.jo.html.DomShell.{$o, button}
-import org.scalajs.dom.html.{Button, Element}
+import org.scalajs.dom.html.{Button, Element, Link}
 import org.scalajs.dom.raw.HTMLElement
 
-trait OnClick[R <: Element] extends EventFromView with LeaveView[R] {
-
+trait OnClick[R <: Element] extends EventFromView with InDom[R] {
+  self: IdView =>
 
   override def init(p: HTMLElement): Unit = {
 
     myEvent(id) match {
       case None => throw new Exception("dont find " + id)
-      case Some(func) => $o[R](id) match {
-        case None => throw new Exception("dont find " + id)
-        case Some(e) => e.addEventListener("click", func)
-      }
+      case Some(func) => me.addEventListener("click", func)
     }
+  }
 
+
+}
+object OnClick{
+  type BaseClick[ClickType<: Element] =  OnClick[ClickType]with IdView
+  def apply[ClickType <: Element](idp : String): BaseClick[ClickType] = new OnClick[ClickType]()  with IdView {
+    override def id: String = idp
+    override def updateView(): Unit = {}
   }
 }
-
 object ButtonHtml {
-  def apply(idp: String, label: String = ""): OnClick[Button] = new OnClick[Button]() {
+  type ButtonType = LeaveView[Button] with InDom[Button] with OnClick[Button]
+
+  def apply(idp: String, label: String = ""): ButtonType = new LeaveView[Button] with InDom[Button] with OnClick[Button] {
     override def id: String = idp
 
     override def html(): Button = toElement(button(id = id, label))
 
-
+    override def updateView(): Unit = {}
   }
 }
