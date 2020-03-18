@@ -8,4 +8,5 @@ trait InDom[Me <: HTMLElement]{
 
   def updateView(){}
   def init(parent : HTMLElement)
+
 }

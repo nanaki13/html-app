@@ -10,20 +10,13 @@ import scala.xml.{Node, NodeBuffer}
 trait IdView{
   def id : String
 }
-trait _View[Root <: HTMLElement] extends IdView{
+trait _View[Root <: HTMLElement] extends InDom[Root] with IdView{
 
   def removeFromView(): Unit = DomShell.remove < id
   def toElement[E <: Element](n: Node): E =  BridgeXmlHtml.toElement(n)
 
   def toElementBase(n: NodeBuffer): HTMLCollection =  BridgeXmlHtml.toElementBase(n)
   def html(): Root
-}
-trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root]{
-
-  val inDoms = mutable.ListBuffer[InDom[_]]()
-
-
-
   def addTo(id: String): Unit = {
     val parent =  $[HTMLElement](id)
     parent.appendChild(html())
@@ -34,12 +27,24 @@ trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root]{
     el.appendChild(html())
     init(el)
   }
+
+}
+trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root]{
+
+  val inDoms = mutable.ListBuffer[InDom[_]]()
+
+
+
+
   def add[T <: InDom[_]](inDom : T):T ={
     inDoms += inDom
     inDom
   }
 
    override def init(parent : HTMLElement): Unit = {
+     if(me == null){
+       throw new Exception("On a pas "+id+" dans le dom")
+     }
     inDoms.foreach(_.init(me))
 
   }
@@ -57,15 +62,7 @@ abstract case class XmlView[Root <: HTMLElement](xml : Node) extends LeaveView[R
 trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with IdView {
 
   def html(): Root
-  def addTo(id: String): Unit = {
-    val parent =  $[HTMLElement](id)
-    parent.appendChild(html())
-    init(parent)
-  }
-  def addTo(el: HTMLElement): Unit = {
-    el.appendChild(html())
-    init(el)
-  }
+
   override def updateView(): Unit = {}
 
 }
