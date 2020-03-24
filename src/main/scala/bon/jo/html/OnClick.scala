@@ -24,6 +24,7 @@ object OnClick{
     override def updateView(): Unit = {}
   }
 }
+trait ButtonHtml extends LeaveView[Button] with InDom[Button] with OnClick[Button]
 object ButtonHtml {
   type ButtonType = LeaveView[Button] with InDom[Button] with OnClick[Button]
 
