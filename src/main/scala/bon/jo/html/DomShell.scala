@@ -20,6 +20,9 @@ object DomShell {
 
     def clear(): Unit = e.children.foreach(e => e.parentNode.removeChild(e))
 
+    def addChild(node: Node): Unit ={
+      e.appendChild($c(node))
+    }
     def clearAndReplace(el: List[HTMLElement]): Boolean = DomShell.clearAndAdd(e, el)
 
     def safeRemoveChild(el: HTMLElement): Any = if (e.contains(el)) {
@@ -63,6 +66,10 @@ object DomShell {
       ret
     }
 
+    def apply(node: Node): Element = {
+      $c.withInner[Div](node.mkString).children(0)
+    }
+
     def apply[D <: Div](): D = {
       document.createElement("div").asInstanceOf[D]
     }
@@ -79,7 +86,6 @@ object DomShell {
   object $ {
 
     def apply[R <: Element](id: String): R = {
-      println(s"get $id")
       val ret = document.getElementById(id)
       if (ret != null) {
         ret.asInstanceOf[R]
