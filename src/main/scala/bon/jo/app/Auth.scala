@@ -2,20 +2,18 @@ package bon.jo.app
 
 import java.util.Base64
 
-import bon.jo.app.RequestHttp.GET
+import bon.jo.app.RequestHttp.{GET, Method}
 import bon.jo.html.DomShell
 import org.scalajs.dom.experimental.URLSearchParams
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 
 object Auth {
 
-  trait KoAuth extends (() => Unit)
 
-  trait OkAuth extends (User => Unit)
-  class AuthFromSearch(implicit ok: OkAuth, ko: KoAuth) extends Auth {
+  class AuthFromSearch() extends Auth {
     override def extractToken: Option[String] = {
       val paramParser: URLSearchParams = new URLSearchParams(org.scalajs.dom.window.location.search)
       Option(paramParser.get("token")).map(e => {
@@ -34,7 +32,7 @@ object Auth {
     }
   }
 
-  class AuthFromStore(implicit ok: OkAuth, ko: KoAuth) extends Auth {
+  class AuthFromStore extends Auth {
     override def extractToken: Option[String] = Option(org.scalajs.dom.window.localStorage.getItem("token"))
 
     override protected def selfEndOk(): Unit = {
@@ -48,20 +46,19 @@ object Auth {
     JSON.parse(new String(Base64.getUrlDecoder.decode(resp.substring(resp.indexOf('.') + 1, resp.lastIndexOf('.')))))
   }
 
-  def apply(paramSearch: String)(implicit ok: OkAuth, ko: KoAuth): Auth = {
+  def apply(paramSearch: String): Auth = {
     implicit val s = paramSearch
     new AuthFromSearch
   }
 
-  def apply()(implicit ok: OkAuth, ko: KoAuth): Auth = {
+  def apply(): Auth = {
     new AuthFromStore
   }
 
 
-  def doAuth()(ok:User => Unit, ko: => Unit): Unit = {
+  def doAuth()(ok: User => Unit, ko: => Unit): Future[User] = {
 
-    implicit val o: OkAuth = user => ok(user)
-    implicit val k: KoAuth = () => ko
+
     case class Acc(var token: Option[String] = None, var auth: Option[Auth] = None)
     val method = List(new AuthFromSearch, new AuthFromStore)
     val toeknParsingResult = method.foldLeft(Acc())((acc, auth) => {
@@ -76,14 +73,15 @@ object Auth {
     })
     toeknParsingResult match {
       case Acc(Some(token), Some(auth)) => auth.validate(token)
-      case _ => k()
+      case _ => Future.successful(User("Anonym"))
     }
 
   }
 }
 
-sealed abstract class Auth(implicit ok: Auth.OkAuth, ko: Auth.KoAuth) {
+sealed abstract class Auth {
 
+  implicit val ex: ExecutionContextExecutor = scala.concurrent.ExecutionContext.global
 
   def extractToken: Option[String]
 
@@ -91,20 +89,11 @@ sealed abstract class Auth(implicit ok: Auth.OkAuth, ko: Auth.KoAuth) {
 
   protected def selfEndKo(): Unit
 
-  def validate(token: String)(implicit ok: Auth.OkAuth, ko: Auth.KoAuth): Unit = {
-    GET.`doRaw`(dest = s"/auth/verify", headers = List(("Authorization", "Bearer " + token))) {
-      s => {
-        if (s == 204) {
-          DomShell.log("OK")
-          selfEndOk()
-          ok(Auth.parse(token).asInstanceOf[User])
-        } else {
-          println(s" invalid return code for validating token$s")
-          selfEndKo()
-          ko()
-        }
-
-      }
+  def validate(token: String): Future[User] = {
+    GET.withOkStatus(204).send(dest = s"/auth/verify", headers = List(("Authorization", "Bearer " + token)))
+      .map(_.body[User]) map {
+      _.getOrElse(User("Anonym"))
     }
+
   }
 }
