@@ -1,12 +1,13 @@
 package bon.jo
 
+import bon.jo.app.User
 import bon.jo.game.html.Template
 import bon.jo.html.ButtonHtml
 import bon.jo.html.DomShell.{$, inputXml}
 import org.scalajs.dom.html.{Div, Input}
 import org.scalajs.dom.raw.HTMLElement
 
-class TestSocketTemplate extends Template {
+class TestSocketTemplate(override val user: User = User.Visitor) extends Template {
   var msg: Div = _
   var urlInput: Input = _
   var sendInput: Input = _

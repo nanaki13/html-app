@@ -2,13 +2,14 @@ package bon.jo.app
 
 import java.util.Base64
 
-import bon.jo.app.RequestHttp.{GET, Method}
+import bon.jo.app.RequestHttp.GET
 import bon.jo.html.DomShell
 import org.scalajs.dom.experimental.URLSearchParams
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+import scala.util.{Failure, Success, Try}
 
 object Auth {
 
@@ -56,7 +57,7 @@ object Auth {
   }
 
 
-  def doAuth()(ok: User => Unit, ko: => Unit): Future[User] = {
+  def doAuth(): Future[User] = {
 
 
     case class Acc(var token: Option[String] = None, var auth: Option[Auth] = None)
@@ -73,7 +74,7 @@ object Auth {
     })
     toeknParsingResult match {
       case Acc(Some(token), Some(auth)) => auth.validate(token)
-      case _ => Future.successful(User("Anonym"))
+      case _ => Future.successful(User.Visitor)
     }
 
   }
@@ -90,10 +91,19 @@ sealed abstract class Auth {
   protected def selfEndKo(): Unit
 
   def validate(token: String): Future[User] = {
-    GET.withOkStatus(204).send(dest = s"/auth/verify", headers = List(("Authorization", "Bearer " + token)))
-      .map(_.body[User]) map {
-      _.getOrElse(User("Anonym"))
+
+
+    {
+      GET.withOkStatus(204).send(dest = s"/auth/verify", headers = List(("Authorization", "Bearer " + token)))
+    } map { _ =>
+      val ret = User(Auth.parse(token).asInstanceOf[TokenPlayLoad])
+      selfEndOk()
+      ret
+    } recover {
+      case exception: Exception => DomShell.log(exception.getMessage); selfEndKo(); User.Visitor
     }
 
   }
+
+
 }

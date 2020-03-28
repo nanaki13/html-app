@@ -13,8 +13,8 @@ object AppLoaderExample extends App with AppLoader{
   val apps = List("app-test-socket", "app-test")
 
   val conf: Map[String, HtmlAppFactory[_]] = Map(
-    "app-test-socket" -> new HtmlAppFactory[TestSocketTemplate]((app: Div, template: Template) => new TestSocketAppApp(app, template), () => new TestSocketTemplate),
-    "app-test" -> new HtmlAppFactory[Test]((app: Div, template: Template) => new Test(app, template), () => new Test)
+    "app-test-socket" -> new HtmlAppFactory[TestSocketTemplate]((app: Div, template: Template) => new TestSocketAppApp(app, template), _ => new TestSocketTemplate),
+    "app-test" -> new HtmlAppFactory[Test]((app: Div, template: Template) => new Test(app, template), _ => new Test)
   )
   loads(apps)
 

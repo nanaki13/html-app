@@ -80,7 +80,7 @@ class RequestHttp(urlDesr: String,
 
 
     new Promise[Response]((resolve, reject) => {
-      request.send(an)
+      request.send( an)
       request.onreadystatechange = (e: Event) => {
 
         if (request.readyState == XMLHttpRequest.DONE) {

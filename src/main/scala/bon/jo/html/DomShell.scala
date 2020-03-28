@@ -1,6 +1,6 @@
 package bon.jo.html
 
-import org.scalajs.dom.document
+import org.scalajs.dom.{document, raw}
 import org.scalajs.dom.html.Div
 import org.scalajs.dom.raw.{Element, HTMLCollection, HTMLElement}
 
@@ -18,7 +18,8 @@ object DomShell {
       e.classList.add(s)
     }
 
-    def clear(): Unit = e.children.foreach(e => e.parentNode.removeChild(e))
+    def removeFromDom(): raw.Node = e.parentNode.removeChild(e)
+    def clear(): Unit = e.children.foreach(a=>  e.removeChild(a))
 
     def addChild(node: Node): Unit ={
       e.appendChild($c(node))
@@ -47,7 +48,9 @@ object DomShell {
     {in}
   </form>
 
-  def inputXml(name: String, label: String, value: Any = "", _type: String = "text"): Elem = <div class="form-group">
+  def inputXml(name: String, label: String, value: Any = "", _type: String = "text"
+
+              ): Elem = <div class="form-group">
     <label for={s"" + name} class="form-label">
       {label}
     </label> <input class="form-control" name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/>
