@@ -11,10 +11,11 @@ import scala.scalajs.js.{JSON, Promise}
 object RequestHttp {
 
 
-  sealed  class Method(private var okStatus: Int) {
+  sealed class Method(protected var _okStatus: Int) {
 
+    def okStatus: Int = _okStatus
 
-    def send[A](dest: String, body: A = null, headers: List[(String, String)] = Nil)(implicit writer: A => String = { (a :A)=> if (a != null) a.toString else null }): Future[Response] = {
+    def send[A](dest: String, body: A = null, headers: List[(String, String)] = Nil)(implicit writer: A => String = { (a: A) => if (a != null) a.toString else null }): Future[Response] = {
       new RequestHttp(dest, this, headers).sendBody(writer(body))
     }
 
@@ -22,11 +23,16 @@ object RequestHttp {
 
     def checkStatus(status: Int): Boolean = okStatus == status
 
-    def withOkStatus(status: Int) : this.type = {
-      okStatus = status
-      this
+    def withOkStatus(status: Int): Method = {
+     val cp =  Clone(this)
+      cp._okStatus = status
+      cp
     }
 
+  }
+
+  case class Clone(method: Method) extends Method(method.okStatus){
+    override def toString: String = method.toString
   }
 
   case object POST extends Method(201)
@@ -61,7 +67,7 @@ case class Response(var bodyOption: Option[AnyRef], var status: Int = -1) {
 
 object RequestExeptions {
 
-  class StatusException(status: Int, msg: String = null, cause: Throwable = null) extends Exception(msg: String, cause) {
+  class StatusException(status: Int, msg: String, cause: Throwable = null) extends Exception(msg: String, cause) {
 
   }
 
@@ -80,7 +86,7 @@ class RequestHttp(urlDesr: String,
 
 
     new Promise[Response]((resolve, reject) => {
-      request.send( an)
+      request.send(an)
       request.onreadystatechange = (e: Event) => {
 
         if (request.readyState == XMLHttpRequest.DONE) {
@@ -88,7 +94,7 @@ class RequestHttp(urlDesr: String,
           if (okStatus(request.status)) {
             resolve(resp)
           } else {
-            reject(new StatusException(request.status))
+            reject(new StatusException(request.status, s"invalid status : ${request.status}"))
           }
         }
       }

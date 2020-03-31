@@ -1,5 +1,6 @@
 package bon.jo.app
 
+import bon.jo.Logger
 import bon.jo.game.html.Template
 import bon.jo.html.DomShell.{$, ExtendedHTMLCollection}
 import bon.jo.html.util.Anim
@@ -29,7 +30,21 @@ trait AppLoader {
     element.innerHTML = template.body
     val appDiv: Div = $(template.id)
     val ret = htmlFact(appDiv, template)
-    template.init(appDiv)
+    if (ret.haveAsynStartup) {
+      Logger.log(s"start asynchrone $app")
+      (ret.asynStartup() map {
+        e =>
+          Logger.log(s"after load process asynchrone , init template $app")
+          template.init(appDiv)
+      }).onComplete {
+        case Failure(exception) => Logger.log(s"asynchrone loading $app FAIL  :${exception}, ${exception.getMessage}"); throw exception
+        case Success(value) => Logger.log(s"asynchrone loading $app OK")
+      }
+    } else {
+      Logger.log(s"start normal  , init template  $app")
+      template.init(appDiv)
+    }
+
     ret
   }
 
