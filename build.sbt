@@ -10,7 +10,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{CrossType, crossProject}
 enablePlugins(ScalaJSPlugin)
 
 name := "html-app"
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 organization := "bon.jo"
 scalaVersion := "2.13.1" // or any other Scala version >= 2.11.12
 
