@@ -5,7 +5,7 @@ import org.scalajs.dom.html.Div
 import org.scalajs.dom.raw.{Element, HTMLCollection, HTMLElement}
 
 import scala.scalajs.js
-import scala.xml.{Elem, Group, Node}
+import scala.xml.{Elem, Group, MetaData, Node, Null, UnprefixedAttribute}
 
 object DomShell {
   def log(m: Any): Unit = org.scalajs.dom.window.console.log(m)
@@ -13,22 +13,35 @@ object DomShell {
   def deb(): Unit = js.special.debugger()
 
 
-  implicit class ExtendedElement(val e: HTMLElement) {
-    def css(s: String): Unit = {
-      e.classList.add(s)
-    }
+
+  implicit class ExtendedNode(val e: org.scalajs.dom.raw.Node) {
 
     def removeFromDom(): raw.Node = e.parentNode.removeChild(e)
-    def clear(): Unit = e.children.foreach(a=>  e.removeChild(a))
 
-    def addChild(node: Node): Unit ={
+    def addChild(node: Node): Unit = {
       e.appendChild($c(node))
     }
-    def clearAndReplace(el: List[HTMLElement]): Boolean = DomShell.clearAndAdd(e, el)
+    def addChild(node: String): Unit = {
+      val n = $c[HTMLElement](node)
+      e.appendChild(n)
+    }
+
 
     def safeRemoveChild(el: HTMLElement): Any = if (e.contains(el)) {
       e.removeChild(el)
     }
+  }
+
+  implicit class ExtendedElement(override val e: org.scalajs.dom.raw.HTMLElement) extends ExtendedNode(e){
+    def css(s: String): Unit = {
+      e.classList.add(s)
+    }
+
+
+    def clear(): Unit = e.children.foreach(a => e.removeChild(a))
+
+
+    def clearAndReplace(el: List[HTMLElement]): Boolean = DomShell.clearAndAdd(e, el)
 
   }
 
@@ -37,7 +50,6 @@ object DomShell {
       (0 until e.length).map(e(_)).iterator
     }
   }
-
 
 
   def form(seq: Node*): Elem = <form>
@@ -49,14 +61,25 @@ object DomShell {
   </form>
 
   def inputXml(name: String, label: String, value: Any = "", _type: String = "text"
+               , inputClasses: String = "",dataSet : Map[String,String] = Map.empty
+              ): Elem ={
 
-              ): Elem = <div class="form-group">
-    <label for={s"" + name} class="form-label">
-      {label}
-    </label> <input class="form-control" name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/>
-  </div>
+    val metaDataAgg : MetaData = Null
+   val metaData =  dataSet.foldLeft(metaDataAgg)( (md , kv)=> md.copy( new UnprefixedAttribute("data-"+kv._1,kv._2,Null)))
 
-  def inputHtml(name: String, label: String, value: Any = ""): Div = BridgeXmlHtml.toElement(inputXml(name, label, value))
+    <div class="form-group">
+      <label for={s"" + name} class="form-label">
+        {label}
+      </label>
+      {
+       val class_ = "form-control" +(if (inputClasses.nonEmpty) {" " + inputClasses} else "")
+        val in = <input class={class_ } name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/>//
+        in.copy(attributes = in.attributes.append(metaData))
+      }
+    </div>
+  }
+
+  def inputHtml(name: String, label: String, value: Any = "", inputClasses: String = "",dataSet : Map[String,String] = Map.empty): Div = BridgeXmlHtml.toElement(inputXml(name, label, value,inputClasses= inputClasses,dataSet = dataSet))
 
   def button(id: String, text: String, class_ : String = ""): Elem = <button id={"" + id} class={"btn btn-primary" + class_} type="button">
     {text}
