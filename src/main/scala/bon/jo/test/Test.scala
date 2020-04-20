@@ -21,9 +21,7 @@ class Test(app: Div, template: Template) extends HtmlApp[Test](app: Div, templat
 
   override def xml: Node = <div id="test"></div>
 
-  override def updateView(): Unit = {
 
-  }
 
   override def init(p: HTMLElement): Unit = ???
 }

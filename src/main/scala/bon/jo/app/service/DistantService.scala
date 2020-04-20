@@ -7,10 +7,11 @@ import scala.concurrent.Future
 import scala.scalajs.js
 import scala.concurrent.ExecutionContext.Implicits._
 
-case class DistantService[Send,Receive](url: String)
+case class DistantService[Send  ,Receive ](url: String)
                             (implicit read: js.Any =>Receive, write:Send => String, user: User) {
 
 
+  var maxId : Int = 0
   def save(m: Send): Future[Response] = {
     POST.send(dest = url, body = m)
   }

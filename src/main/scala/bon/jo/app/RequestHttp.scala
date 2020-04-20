@@ -74,7 +74,7 @@ object RequestExeptions {
 }
 
 class RequestHttp(urlDesr: String,
-                  method: RequestHttp.Method, headers: Seq[(String, String)] = Nil) {
+                  method: RequestHttp.Method, headers: Seq[(String, String)] = Nil,json :Boolean =  true) {
   val request = new XMLHttpRequest
 
   def open(): Unit = request.open(method.name, urlDesr)
@@ -113,7 +113,10 @@ class RequestHttp(urlDesr: String,
     val makeHeader: ((String, String)) => Unit = request.setRequestHeader _ tupled _
     //Envoie les informations du header adaptées avec la requête
 
-    request.setRequestHeader("Content-Type", "application/json");
+    if(json){
+      request.setRequestHeader("Content-Type", "application/json");
+    }
+
     headers.foreach(makeHeader)
 
   }

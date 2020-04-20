@@ -12,7 +12,7 @@ class TestSocketTemplate(override val user: User = User.Visitor) extends Templat
   var urlInput: Input = _
   var sendInput: Input = _
 
-  override def updateView(): Unit = {
+   def updateView(): Unit = {
     myButton.addTo("submit")
     msg = $[Div]("resp")
     urlInput = $[Input]("url")

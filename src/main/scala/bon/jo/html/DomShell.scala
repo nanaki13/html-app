@@ -1,16 +1,75 @@
 package bon.jo.html
 
 import bon.jo.Logger
-import org.scalajs.dom.{document, raw}
 import org.scalajs.dom.html.{Div, Input}
-import org.scalajs.dom.raw.{Element, HTMLCollection, HTMLElement, KeyboardEvent, MouseEvent}
+import org.scalajs.dom.raw._
+import org.scalajs.dom.{document, raw}
 
+import scala.collection.mutable
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.Promise
-import scala.xml.{Elem, Group, MetaData, Node, Null, UnprefixedAttribute}
+import scala.xml.{Elem, MetaData, Node, Null, UnprefixedAttribute}
+import scala.xml.Group
 
 object DomShell {
+
+  case class StackObs[A](var clients: List[A => Unit] = Nil) extends Obs[A] {
+    override def suscribe(client: A => Unit): Unit = clients = client :: clients
+
+    override def newValue(a: A): Unit = clients.foreach(_ (a))
+
+    override def clearClients: Unit = clients = Nil
+  }
+
+  trait Obs[A] {
+    def suscribe(client: A => Unit): Unit
+
+    def newValue(a: A): Unit
+
+    def clearClients: Unit
+  }
+
+
+  class OnceObs[A](private var client: A => Unit = null) extends Obs[A] {
+    def clearClients: Unit = {
+      client = null
+    }
+
+    override def suscribe(clientp: A => Unit): Unit = client = clientp
+
+    override def newValue(a: A): Unit = client(a)
+
+    def toMany = new StackObs[A](if (client != null) client :: Nil else Nil)
+  }
+
+  object Obs {
+    val alls: mutable.Map[String, Obs[_]] = mutable.Map[String, Obs[_]]()
+
+    def once[A](): OnceObs[A] = {
+      val ret = new OnceObs[A]() {}
+      ret
+    }
+
+    def once[A](client: A => Unit): OnceObs[A] = {
+      val ret = new OnceObs[A](client) {}
+      ret
+    }
+
+    def get[A](id: String): Obs[A] = {
+
+      val ret = alls.get(id)
+      if (ret.isEmpty) {
+        val n = new StackObs[A]()
+        alls(id) = n
+        n
+      } else {
+        ret.get.asInstanceOf[Obs[A]]
+      }
+    }
+
+
+  }
 
   trait GiveItToMe extends (String => String)
 
@@ -61,6 +120,22 @@ object DomShell {
       element.classList.add(s)
     }
 
+
+    def clk(): Obs[MouseEvent] = {
+
+      val obs = Obs.get[MouseEvent](element.id + "-clk-obs")
+      element.addEventListener("click", (e: MouseEvent) => obs.newValue(e))
+      obs
+    }
+
+    def clkOnce(): OnceObs[MouseEvent] = {
+
+      val obs = Obs.once[MouseEvent]()
+
+      element.addEventListener("click", (e: MouseEvent) => obs.newValue(e))
+      obs
+    }
+
     import scala.concurrent.ExecutionContext.Implicits._
 
     def EnterEvent(el: HTMLElement)(f: js.Function1[KeyboardEvent, _]): Unit = {
@@ -107,9 +182,10 @@ object DomShell {
           element.addChild(<input value={sendItToYou(old)}>
           </input>)
           val in = element.firstChild.asInstanceOf[Input]
-          element.style.width = conservseWoth.toString+"px"
-        //  in.style.width = conservseWoth.toString+"px"
+          element.style.width = conservseWoth.toString + "px"
+          //  in.style.width = conservseWoth.toString+"px"
           in.ValueUserEnter foreach {
+            ()
             (e) =>
               val nVlaue = giveItToMe(e)
               element.clear()
@@ -124,6 +200,11 @@ object DomShell {
 
     def clear(): Unit = element.children.foreach(a => element.removeChild(a))
 
+    def inDom: Boolean = {
+      Logger.log(element.id + " = " + document.getElementById(element.id))
+
+      document.getElementById(element.id) != null
+    }
 
     def clearAndReplace(el: List[HTMLElement]): Boolean = DomShell.clearAndAdd(element, el)
 
@@ -145,8 +226,8 @@ object DomShell {
   </form>
 
   def simpleInputXml(name: String, label: String, value: Any = "", _type: String = "text"
-               , inputClasses: String = "", dataSet: Map[String, String] = Map.empty
-              ): Elem = {
+                     , inputClasses: String = "", dataSet: Map[String, String] = Map.empty
+                    ): Elem = {
 
     val metaDataAgg: MetaData = Null
     val metaData = dataSet.foldLeft(metaDataAgg)((md, kv) => md.copy(new UnprefixedAttribute("data-" + kv._1, kv._2, Null)))
@@ -156,6 +237,7 @@ object DomShell {
     val in = <input class={class_} name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/> //
     in.copy(attributes = in.attributes.append(metaData))
   }
+
   def inputXml(name: String, label: String, value: Any = "", _type: String = "text"
                , inputClasses: String = "", dataSet: Map[String, String] = Map.empty
               ): Elem = {
@@ -164,7 +246,7 @@ object DomShell {
     val metaData = dataSet.foldLeft(metaDataAgg)((md, kv) => md.copy(new UnprefixedAttribute("data-" + kv._1, kv._2, Null)))
 
     <div class="form-group">
-      <label for={s"" + name} class="form-label">
+      <label id={s"l-" + name} for={s"" + name} class="form-label">
         {label}
       </label>{val class_ = "form-control" + (if (inputClasses.nonEmpty) {
       " " + inputClasses
@@ -175,6 +257,7 @@ object DomShell {
   }
 
   def inputHtml(name: String, label: String, value: Any = "", inputClasses: String = "", dataSet: Map[String, String] = Map.empty): Div = BridgeXmlHtml.toElement(inputXml(name, label, value, inputClasses = inputClasses, dataSet = dataSet))
+
   def simpleInputHtml(name: String, label: String, value: Any = "", inputClasses: String = "", dataSet: Map[String, String] = Map.empty): Div = BridgeXmlHtml.toElement(simpleInputXml(name, label, value, inputClasses = inputClasses, dataSet = dataSet))
 
   def button(id: String, text: String, class_ : String = ""): Elem = <button id={"" + id} class={"btn btn-primary" + class_} type="button">

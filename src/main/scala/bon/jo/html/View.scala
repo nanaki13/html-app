@@ -5,6 +5,7 @@ import org.scalajs.dom.Element
 import org.scalajs.dom.raw.{HTMLCollection, HTMLElement}
 
 import scala.collection.mutable
+import scala.scalajs.js.annotation.JSExport
 import scala.xml.{Node, NodeBuffer}
 
 trait IdView {
@@ -33,7 +34,13 @@ trait _View[Root <: HTMLElement] extends InDom[Root] with IdView {
   }
 
 }
+trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with IdView {
 
+  def html(): Root
+
+
+
+}
 trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root] {
 
   val inDoms = mutable.ListBuffer[InDom[_]]()
@@ -55,23 +62,15 @@ trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root] {
 
 abstract case class View[Root <: HTMLElement](html: Root) extends LeaveView[Root] {
 
-  override def updateView(): Unit = {}
+
 }
 
 abstract case class XmlView[Root <: HTMLElement](xml: Node) extends LeaveView[Root] {
-
-  override def updateView(): Unit = {}
-
+  @JSExport
   override def html(): Root = BridgeXmlHtml.toElement(xml)
 }
 
-trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with IdView {
 
-  def html(): Root
-
-  override def updateView(): Unit = {}
-
-}
 
 trait BridgedView[Root <: HTMLElement, _1] extends _View[Root] {
   def conversion(_1: _1): Root

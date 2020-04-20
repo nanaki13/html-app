@@ -33,7 +33,7 @@ trait CssAnim extends Anim{
   def reset() : Unit
 
   val theStyle :  raw.CSSStyleDeclaration
-  def doAnim(  theStyle :  raw.CSSStyleDeclaration)
+  def doAnim(  theStyle :  raw.CSSStyleDeclaration): Unit
   def continu(  theStyle :  raw.CSSStyleDeclaration):Boolean
 
   override def doAnim(): Boolean = {doAnim(theStyle);continu(theStyle)}
@@ -57,7 +57,7 @@ object CssAnim {
     override def continu(theStyle: raw.CSSStyleDeclaration): Boolean = Math.abs(from - to) >   Math.abs(from - current)
     override def doAnim(theStyle: raw.CSSStyleDeclaration): Unit = {
       current = current + inc
-      val n = current+"em"
+      val n = s"${current}em"
       theStyle.height = n
     }
     def reverse: HeightAnim = this.copy(from = to,to = from)
