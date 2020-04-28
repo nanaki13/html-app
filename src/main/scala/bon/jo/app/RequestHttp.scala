@@ -37,7 +37,11 @@ object RequestHttp {
 
   case object POST extends Method(201)
 
-  case object GET extends Method(200)
+  case object GET extends Method(200){
+    def get(dest: String, headers: List[(String, String)] = Nil): Future[Response] = {
+      new RequestHttp(dest, this, headers).sendBody(null)
+    }
+  }
 
   case object PATCH extends Method(204)
 

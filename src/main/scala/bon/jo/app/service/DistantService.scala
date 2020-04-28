@@ -3,15 +3,18 @@ package bon.jo.app.service
 import bon.jo.app.RequestHttp.{DELETE, GET, PATCH, POST}
 import bon.jo.app.{Response, User}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.scalajs.js
-import scala.concurrent.ExecutionContext.Implicits._
+
 
 case class DistantService[Send  ,Receive ](url: String)
-                            (implicit read: js.Any =>Receive, write:Send => String, user: User) {
+                            (implicit read: js.Any =>Receive,
+                             write:Send => String,
+                             user: User
+                            ,ex : ExecutionContext
+                            ) {
 
 
-  var maxId : Int = 0
   def save(m: Send): Future[Response] = {
     POST.send(dest = url, body = m)
   }

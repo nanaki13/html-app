@@ -6,9 +6,9 @@ import org.scalajs.dom.raw._
 import org.scalajs.dom.{document, raw}
 
 import scala.collection.mutable
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 import scala.scalajs.js
-import scala.scalajs.js.Promise
+//import scala.scalajs.js.Promise
 import scala.xml.{Elem, MetaData, Node, Null, UnprefixedAttribute}
 import scala.xml.Group
 
@@ -148,54 +148,75 @@ object DomShell {
       el.addEventListener("keyup", composedFunction)
     }
 
-    def CaputreResult(resConsumr: String => Unit): Unit = {
+    def CaputreResult(resConsumr: String => Unit,optionRead : Option[() => String]): Unit = {
       EnterEvent(element) {
         e =>
-          resConsumr(e.target.asInstanceOf[Input].value)
-      }
-    }
-
-    def ValueUserEnter: Future[String] = {
-      (new Promise[String]((a, r) => {
-        element.CaputreResult(res => a(res))
-      }
-      )).toFuture
-
-    }
-
-
-    def UserCanUpdate(diopter: Option[Diopter] = None): Future[String] = {
-      element.style.cursor = "pointer"
-      new Promise[String]((a, r) => {
-        lazy val jsF: js.Function1[MouseEvent, _] = (e: MouseEvent) => {
-          def sendItToYou: String => String = diopter.map(_.sendItToYou).getOrElse(identity[String])
-
-          def giveItToMe: String => String = diopter.map(_.giveItToMe).getOrElse(identity[String])
-
-          element.removeEventListener("click", jsF)
-          val old = element.innerText
-
-          val conservseWoth = element.clientWidth
-
-          element.innerText = ""
-          element.clear()
-          element.addChild(<input value={sendItToYou(old)}>
-          </input>)
-          val in = element.firstChild.asInstanceOf[Input]
-          element.style.width = conservseWoth.toString + "px"
-          //  in.style.width = conservseWoth.toString+"px"
-          in.ValueUserEnter foreach {
-            ()
-            (e) =>
-              val nVlaue = giveItToMe(e)
-              element.clear()
-              element.appendChild(document.createTextNode(nVlaue))
-              element.addEventListener("click", jsF)
-              a(e)
+          optionRead match {
+            case Some(value) =>  resConsumr(value())
+            case None => resConsumr(e.target.asInstanceOf[Input].value)
           }
+
+      }
+    }
+
+    def ValueUserEnter(optionRead : Option[() => String]): Future[String] = {
+      val p = Promise[String]()
+
+      element.CaputreResult(res => p.success(res),optionRead)
+      p.future
+
+    }
+
+    def UserCanUpdate(diopter: Option[Diopter] = None, inputView: Option[String => HTMLElement] = None
+      ,read : Option[HTMLElement => String] = None
+                     )(implicit fact : () => Obs[String]): Obs[String] = {
+
+      element.style.cursor = "pointer"
+
+     val obs = fact()
+
+      lazy val jsF: js.Function1[MouseEvent, _] = (e: MouseEvent) => {
+        def sendItToYou: String => String = diopter.map(_.sendItToYou).getOrElse(identity[String])
+
+        def giveItToMe: String => String = diopter.map(_.giveItToMe).getOrElse(identity[String])
+
+        element.removeEventListener("click", jsF)
+        val old = element.innerText
+
+        val conservseWoth = element.clientWidth
+
+        element.innerText = ""
+        element.clear()
+        var optionRead : Option[() => String] = None
+        inputView match {
+          case Some(value) => {
+            element.appendChild(value(sendItToYou(old)))
+
+            optionRead = Some{
+              () =>  read.get(element.children.head.asInstanceOf[HTMLElement])
+            }
+          }
+          case None => element.addChild(<input value={sendItToYou(old)}>
+          </input>)
         }
-        element.addEventListener("click", jsF)
-      }).toFuture
+
+
+        val in = element.firstChild.asInstanceOf[Input]
+        element.style.width = conservseWoth.toString + "px"
+        in.style.width = conservseWoth.toString + "px"
+        //  in.style.width = conservseWoth.toString+"px"
+        in.ValueUserEnter(optionRead) foreach {
+          ()
+          (e) =>
+            val nVlaue = giveItToMe(e)
+            element.clear()
+            element.appendChild(document.createTextNode(nVlaue))
+            element.addEventListener("click", jsF)
+            obs.newValue(e)
+        }
+      }
+      element.addEventListener("click", jsF)
+      obs
     }
 
     def clear(): Unit = element.children.foreach(a => element.removeChild(a))
