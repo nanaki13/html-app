@@ -17,7 +17,7 @@ object DomShell {
   case class StackObs[A](var clients: List[A => Unit] = Nil) extends Obs[A] {
     override def suscribe(client: A => Unit): Unit = clients = client :: clients
 
-    override def newValue(a: A): Unit = clients.foreach(_ (a))
+    override def newValue(a: A): Unit = if(clients.nonEmpty) clients.foreach(_ (a)) else  Logger.log("no client for observed value  : "+a)
 
     override def clearClients: Unit = clients = Nil
   }
@@ -38,7 +38,9 @@ object DomShell {
 
     override def suscribe(clientp: A => Unit): Unit = client = clientp
 
-    override def newValue(a: A): Unit = client(a)
+    override def newValue(a: A): Unit = {
+      if(client != null) client(a) else Logger.log("no client for observed value  : "+a)
+    }
 
     def toMany = new StackObs[A](if (client != null) client :: Nil else Nil)
   }
@@ -89,7 +91,6 @@ object DomShell {
 
   def log(m: Any): Unit = org.scalajs.dom.window.console.log(m)
 
-  def deb(): Unit = js.special.debugger()
 
 
   implicit class ExtendedNode(val element: org.scalajs.dom.raw.Node) {
