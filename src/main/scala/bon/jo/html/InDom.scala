@@ -1,7 +1,8 @@
 package bon.jo.html
 
 import org.scalajs.dom.raw.{HTMLElement, MouseEvent}
-import bon.jo.html.DomShell.{ExtendedElement, Obs}
+import bon.jo.html.DomShell.{ExtendedElement}
+import bon.jo.phy.Obs
 
 import scala.xml.Node
 

@@ -1,6 +1,6 @@
 package bon.jo.html
 
-import bon.jo.html.DomShell.Obs
+import bon.jo.phy.Obs
 import org.scalajs.dom.raw.{Event, HTMLElement}
 
 import scala.language.dynamics

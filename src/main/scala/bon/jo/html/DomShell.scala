@@ -11,67 +11,8 @@ import scala.scalajs.js
 //import scala.scalajs.js.Promise
 import scala.xml.{Elem, MetaData, Node, Null, UnprefixedAttribute}
 import scala.xml.Group
-
+import bon.jo.phy.{Obs,OnceObs}
 object DomShell {
-
-  case class StackObs[A](var clients: List[A => Unit] = Nil) extends Obs[A] {
-    override def suscribe(client: A => Unit): Unit = clients = client :: clients
-
-    override def newValue(a: A): Unit = if(clients.nonEmpty) clients.foreach(_ (a)) else  Logger.log("no client for observed value  : "+a)
-
-    override def clearClients: Unit = clients = Nil
-  }
-
-  trait Obs[A] {
-    def suscribe(client: A => Unit): Unit
-
-    def newValue(a: A): Unit
-
-    def clearClients: Unit
-  }
-
-
-  class OnceObs[A](private var client: A => Unit = null) extends Obs[A] {
-    def clearClients: Unit = {
-      client = null
-    }
-
-    override def suscribe(clientp: A => Unit): Unit = client = clientp
-
-    override def newValue(a: A): Unit = {
-      if(client != null) client(a) else Logger.log("no client for observed value  : "+a)
-    }
-
-    def toMany = new StackObs[A](if (client != null) client :: Nil else Nil)
-  }
-
-  object Obs {
-    val alls: mutable.Map[String, Obs[_]] = mutable.Map[String, Obs[_]]()
-
-    def once[A](): OnceObs[A] = {
-      val ret = new OnceObs[A]() {}
-      ret
-    }
-
-    def once[A](client: A => Unit): OnceObs[A] = {
-      val ret = new OnceObs[A](client) {}
-      ret
-    }
-
-    def get[A](id: String): Obs[A] = {
-
-      val ret = alls.get(id)
-      if (ret.isEmpty) {
-        val n = new StackObs[A]()
-        alls(id) = n
-        n
-      } else {
-        ret.get.asInstanceOf[Obs[A]]
-      }
-    }
-
-
-  }
 
   trait GiveItToMe extends (String => String)
 
