@@ -1,6 +1,7 @@
 package bon.jo.html
 
 import bon.jo.Logger
+import bon.jo.phy.ObsFact
 import org.scalajs.dom.html.{Div, Input}
 import org.scalajs.dom.raw._
 import org.scalajs.dom.{document, raw}
@@ -111,7 +112,7 @@ object DomShell {
 
     def UserCanUpdate(diopter: Option[Diopter] = None, inputView: Option[String => HTMLElement] = None
       ,read : Option[HTMLElement => String] = None
-                     )(implicit fact : () => Obs[String]): Obs[String] = {
+                     )(implicit fact : ObsFact[String]): Obs[String] = {
 
       element.style.cursor = "pointer"
 
