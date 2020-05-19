@@ -1,14 +1,14 @@
 package bon.jo.html
 
 import org.scalajs.dom.raw.{HTMLElement, MouseEvent}
-import bon.jo.html.DomShell.{ExtendedElement}
-import bon.jo.phy.Obs
+import bon.jo.html.DomShell.ExtendedElement
+import bon.jo.phy.{Obs, OnceObs}
 
 import scala.xml.Node
 
 trait InDom[Me <: HTMLElement] {
   _: IdView =>
-  lazy val me = DomShell.$[Me](id)
+  lazy val me: Me = DomShell.$[Me](id)
 
 
   def init(parent: HTMLElement)
@@ -42,7 +42,7 @@ object InDom{
   def clk[Me<: HTMLElement](node : Node): InDom[Me]with XmlHtmlView[Me] = new clk(node)
 }
 trait Clickable[Me <: HTMLElement] extends InDom[Me] with IdView {
-  val obs =  Obs.once[MouseEvent]()
+  val obs: OnceObs[MouseEvent] =  Obs.once[MouseEvent]()
 
   override def init(parent: HTMLElement): Unit = {
     me.addEventListener("click",obs.newValue)

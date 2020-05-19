@@ -5,7 +5,7 @@ import org.scalajs.dom.html.Div
 
 import scala.concurrent.Future
 
-abstract class HtmlApp[Tp <: Template](app: Div, template: Template) {
+abstract class HtmlApp[Tp <: Template](template: Template) {
   def asynStartup(): Future[Unit] = Future.successful(())
 
   def haveAsynStartup: Boolean = false

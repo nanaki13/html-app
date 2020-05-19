@@ -16,12 +16,12 @@ object SocketKeeper {
 
   }
 
-  def updateOnMessage(function:js.Function1[MessageEvent, _] )(implicit ctx : SocketContext) = {
+  def updateOnMessage(function:js.Function1[MessageEvent, _] )(implicit ctx : SocketContext): Unit = {
     ctx.onmessage = function
     SocketKeeper().ws.onmessage = function
   }
 
-  val sockets = mutable.Map[String, SocketKeeper]()
+  val sockets: mutable.Map[String, SocketKeeper] = mutable.Map[String, SocketKeeper]()
 
   def logEvent(event: Event): String = jsonLog(event)
 
@@ -86,7 +86,7 @@ case class SocketKeeper(name: String, url: String,private val  ws: WebSocket, fr
     } else {
       Try({beforeSend.foreach(_());ws.send(request)}) match {
         case Success(_) => None
-        case Failure(exception) => println("on retente"); Some({
+        case Failure(_) => println("on retente"); Some({
           val s = SocketKeeper.defaultSocket( this.ws)
           this.copy(ws = s, fresh = true)
         })

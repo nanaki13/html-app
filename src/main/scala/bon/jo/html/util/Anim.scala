@@ -8,7 +8,7 @@ import scala.scalajs.js.timers.SetIntervalHandle
 
 object Anim {
 
-  var anims = List[Anim]()
+  var anims: List[Anim] = List[Anim]()
 
   def add(a: Anim): Unit = {
     anims = a :: anims
@@ -52,8 +52,8 @@ object CssAnim {
   abstract class CssAnimImpl(override val theStyle: raw.CSSStyleDeclaration) extends CssAnim
 
   case class HeightAnim( from : Double, to  : Double,override val theStyle : raw.CSSStyleDeclaration) extends CssAnimImpl(theStyle) {
-    val inc = if(from < to) 0.1d else -0.1d
-    var current = from
+    val inc: Double = if(from < to) 0.1d else -0.1d
+    var current: Double = from
     override def continu(theStyle: raw.CSSStyleDeclaration): Boolean = Math.abs(from - to) >   Math.abs(from - current)
     override def doAnim(theStyle: raw.CSSStyleDeclaration): Unit = {
       current = current + inc

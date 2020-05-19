@@ -55,7 +55,7 @@ object DomShell {
   }
 
   implicit class NumberFormat(val s: String) {
-    def cleanNonNumber = s.replaceAll(s"[^0-9,.]", "")
+    def cleanNonNumber: String = s.replaceAll(s"[^0-9,.]", "")
   }
 
   implicit class ExtendedElement(override val element: org.scalajs.dom.raw.HTMLElement) extends ExtendedNode(element) {
@@ -118,7 +118,7 @@ object DomShell {
 
      val obs = fact()
 
-      lazy val jsF: js.Function1[MouseEvent, _] = (e: MouseEvent) => {
+      lazy val jsF: js.Function1[MouseEvent, _] = (_: MouseEvent) => {
         def sendItToYou: String => String = diopter.map(_.sendItToYou).getOrElse(identity[String])
 
         def giveItToMe: String => String = diopter.map(_.giveItToMe).getOrElse(identity[String])
@@ -132,13 +132,12 @@ object DomShell {
         element.clear()
         var optionRead : Option[() => String] = None
         inputView match {
-          case Some(value) => {
+          case Some(value) =>
             element.appendChild(value(sendItToYou(old)))
 
             optionRead = Some{
               () =>  read.get(element.children.head.asInstanceOf[HTMLElement])
             }
-          }
           case None => element.addChild(<input value={sendItToYou(old)}>
           </input>)
         }
@@ -150,7 +149,7 @@ object DomShell {
         //  in.style.width = conservseWoth.toString+"px"
         in.ValueUserEnter(optionRead) foreach {
           ()
-          (e) =>
+          e =>
             val nVlaue = giveItToMe(e)
             element.clear()
             element.appendChild(document.createTextNode(nVlaue))
@@ -230,7 +229,7 @@ object DomShell {
 
   object $c {
     def withInner[D <: Div](html: String): D = {
-      val ret = $c[D]
+      val ret = $c[D]()
       ret.innerHTML = html
       ret
     }
@@ -301,9 +300,9 @@ object DomShell {
       }
   }
 
-  def removeAll: DomShellEllemnt[Boolean] = _removeAll
+  def removeAll(): DomShellEllemnt[Boolean] = _removeAll
 
-  def addAll: DomShellFunction[(Element, List[Element]), Boolean] = l => {
+  def addAll(): DomShellFunction[(Element, List[Element]), Boolean] = l => {
     l._2.map(l._1.appendChild).nonEmpty
   }
 

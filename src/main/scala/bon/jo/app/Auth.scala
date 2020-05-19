@@ -24,7 +24,7 @@ object Auth {
     }
 
     override protected def selfEndOk(): Unit = {
-      println("loged from url");
+      println("loged from url")
       org.scalajs.dom.window.history.pushState(null, org.scalajs.dom.document.title, org.scalajs.dom.window.location.pathname)
     }
 
@@ -48,7 +48,7 @@ object Auth {
   }
 
   def apply(paramSearch: String): Auth = {
-    implicit val s = paramSearch
+    implicit val s: String = paramSearch
     new AuthFromSearch
   }
 

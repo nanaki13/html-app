@@ -12,7 +12,7 @@ object StringTr{
   }
 
   object jsontr extends OutIn[js.Any] {
-    override def apply(): Out[js.Any] = JSON.parse(_)
+    override def apply: Out[js.Any] = JSON.parse(_)
 
     override def unapply: In[js.Any] = JSON.stringify(_)
   }

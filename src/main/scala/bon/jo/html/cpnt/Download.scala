@@ -12,7 +12,7 @@ case class Download(fileName: String, s: String) extends FinalComponent[Link] {
   def getLink(string: String) = s"data:application/json;charset=utf-8;base64,${sBase64(string)}"
   override def xml(): Node = <a id={fileName} download={fileName} href={getLink(s)}>text file</a>
 
-  def  updateLink(s : String) = {
+  def  updateLink(s : String): Unit = {
       me.href = getLink(s)
   }
 

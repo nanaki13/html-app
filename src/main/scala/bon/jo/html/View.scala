@@ -5,6 +5,7 @@ import org.scalajs.dom.Element
 import org.scalajs.dom.raw.{HTMLCollection, HTMLElement}
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.scalajs.js.annotation.JSExport
 import scala.xml.{Node, NodeBuffer}
 
@@ -43,7 +44,7 @@ trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with I
 }
 trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root] {
 
-  val inDoms = mutable.ListBuffer[InDom[_]]()
+  val inDoms: ListBuffer[InDom[_]] = mutable.ListBuffer[InDom[_]]()
 
 
   def add[T <: InDom[_]](inDom: T): T = {

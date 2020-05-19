@@ -71,7 +71,7 @@ case class Response(var bodyOption: Option[AnyRef], var status: Int = -1) {
 
 object RequestExeptions {
 
-  class StatusException(status: Int, msg: String, cause: Throwable = null) extends Exception(msg: String, cause) {
+  class StatusException(msg: String, cause: Throwable = null) extends Exception(msg: String, cause) {
 
   }
 
@@ -91,14 +91,14 @@ class RequestHttp(urlDesr: String,
 
     new Promise[Response]((resolve, reject) => {
       request.send(an)
-      request.onreadystatechange = (e: Event) => {
+      request.onreadystatechange = (_: Event) => {
 
         if (request.readyState == XMLHttpRequest.DONE) {
           val resp: Response = Response(Option(request.response), request.status)
           if (okStatus(request.status)) {
             resolve(resp)
           } else {
-            reject(new StatusException(request.status, s"invalid status : ${request.status}"))
+            reject(new StatusException(s"invalid status : ${request.status}"))
           }
         }
       }
@@ -118,7 +118,7 @@ class RequestHttp(urlDesr: String,
     //Envoie les informations du header adaptées avec la requête
 
     if(json){
-      request.setRequestHeader("Content-Type", "application/json");
+      request.setRequestHeader("Content-Type", "application/json")
     }
 
     headers.foreach(makeHeader)

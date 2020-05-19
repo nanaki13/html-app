@@ -8,7 +8,7 @@ import org.scalajs.dom.raw.HTMLElement
 
 import scala.xml.Node
 
-class Test(app: Div, template: Template) extends HtmlApp[Test](app: Div, template: Template) with Template with XmlTemplate {
+class Test(app: Div, template: Template) extends HtmlApp[Test](template: Template) with Template with XmlTemplate {
 
 
   override val user: User = {
@@ -23,6 +23,8 @@ class Test(app: Div, template: Template) extends HtmlApp[Test](app: Div, templat
 
 
 
-  override def init(p: HTMLElement): Unit = ???
+  override def init(p: HTMLElement): Unit = {
+    
+  }
 }
 

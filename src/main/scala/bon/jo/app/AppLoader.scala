@@ -33,12 +33,12 @@ trait AppLoader {
     if (ret.haveAsynStartup) {
       Logger.log(s"start asynchrone $app")
       (ret.asynStartup() map {
-        e =>
+        _ =>
           Logger.log(s"after load process asynchrone , init template $app")
           template.init(appDiv)
       }).onComplete {
-        case Failure(exception) => Logger.log(s"asynchrone loading $app FAIL  :${exception}, ${exception.getMessage}"); throw exception
-        case Success(value) => Logger.log(s"asynchrone loading $app OK")
+        case Failure(exception) => Logger.log(s"asynchrone loading $app FAIL  :$exception, ${exception.getMessage}"); throw exception
+        case Success(_) => Logger.log(s"asynchrone loading $app OK")
       }
     } else {
       Logger.log(s"start normal  , init template  $app")

@@ -17,8 +17,8 @@ import org.scalajs.dom.raw.HTMLElement
 //
 //}
 
-trait ButtonHtml extends LeaveView[Button] with InDom[Button]
-object ButtonHtml {
+trait OnClick extends LeaveView[Button] with InDom[Button]
+object OnClick {
   type ButtonType = LeaveView[Button] with InDom[Button] with Clickable[Button]
 
   def apply(idp: String, label: String = ""): ButtonType = new LeaveView[Button] with InDom[Button] with Clickable[Button] {

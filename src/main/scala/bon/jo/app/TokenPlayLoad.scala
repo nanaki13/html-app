@@ -19,7 +19,7 @@ object User {
 
   def apply(tokenPlayLoad: TokenPlayLoad): User = new User(tokenPlayLoad)
 
-  val Visitor = User("Visitor", Role.Visitor)
+  val Visitor: User = User("Visitor", Role.Visitor)
 }
 
 @JSExportTopLevel("TokenPlayLoad")
