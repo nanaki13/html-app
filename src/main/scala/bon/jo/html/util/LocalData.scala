@@ -12,7 +12,7 @@ object LocalData {
     def unapply[R <: js.Any](key : String  ): Option[R] =  {
      val datag =  data.getItem(key)
       if(datag != null){
-        Some(jsontr()( datag).asInstanceOf[R] )
+        Some(jsontr.apply( datag).asInstanceOf[R] )
       }else{
         None
       }

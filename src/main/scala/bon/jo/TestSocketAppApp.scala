@@ -9,7 +9,7 @@ import org.scalajs.dom.html.Div
 
 class TestSocketAppApp(app: Div, template: Template) extends HtmlApp[TestSocketTemplate](template: Template) {
   typedTemplate.myButton.obsClick().suscribe(_ => {
-    val p = typedTemplate.getParam()
+    val p = typedTemplate.getParam
     implicit val sc: SocketContext = SocketContext("send", p.url, e => {
       typedTemplate.msg(e.data.toString)
     })

@@ -302,7 +302,7 @@ object DomShell {
 
   def removeAll(): DomShellEllemnt[Boolean] = _removeAll
 
-  def addAll(): DomShellFunction[(Element, List[Element]), Boolean] = l => {
+  def addAll: DomShellFunction[(Element, List[Element]), Boolean] = l => {
     l._2.map(l._1.appendChild).nonEmpty
   }
 

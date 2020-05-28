@@ -7,7 +7,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.scalajs.js
 
 
-case class DistantService[Send  ,Receive ](url: String)
+case class DistantService[Send  ,Receive,ID ](url: String)
                             (implicit read: js.Any =>Receive,
                              write:Send => String,
                              user: User
@@ -23,7 +23,7 @@ case class DistantService[Send  ,Receive ](url: String)
     PATCH.send(dest = url, body = m)
   }
 
-  def get(id: Int): Future[Receive] = {
+  def get(id: ID): Future[Receive] = {
     GET.send(dest = url + "/" + id).map {
       e =>
         e.bodyAsJson match {
@@ -45,7 +45,7 @@ case class DistantService[Send  ,Receive ](url: String)
     }
   }
 
-  def delete(id: Int): Future[Response] = {
+  def delete(id: ID): Future[Response] = {
     DELETE.send(dest = url + "/" + id)
   }
 

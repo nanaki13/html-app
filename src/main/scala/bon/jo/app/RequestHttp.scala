@@ -11,6 +11,7 @@ import scala.scalajs.js.{JSON, Promise}
 object RequestHttp {
 
 
+  val CommonHeaders = List(("Cache-Control","no-cache"),("Content-Type", "application/json"))
   sealed class Method(protected var _okStatus: Int) {
 
     def okStatus: Int = _okStatus
@@ -118,7 +119,7 @@ class RequestHttp(urlDesr: String,
     //Envoie les informations du header adaptées avec la requête
 
     if(json){
-      request.setRequestHeader("Content-Type", "application/json")
+      RequestHttp.CommonHeaders.foreach(makeHeader)
     }
 
     headers.foreach(makeHeader)
