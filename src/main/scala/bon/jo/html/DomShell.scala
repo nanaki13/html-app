@@ -188,7 +188,7 @@ object DomShell {
     {in}
   </form>
 
-  def simpleInputXml(name: String, label: String, value: Any = "", _type: String = "text"
+  def simpleInputXml(id: String, labelAndName: String, value: Any = "", _type: String = "text"
                      , inputClasses: String = "", dataSet: Map[String, String] = Map.empty
                     ): Elem = {
 
@@ -197,11 +197,11 @@ object DomShell {
     val class_ = "form-control" + (if (inputClasses.nonEmpty) {
       " " + inputClasses
     } else "")
-    val in = <input class={class_} name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/> //
+    val in = <input class={class_} name={s"" + labelAndName} id={s"" + id} placeholder={"" + labelAndName} value={"" + value} type={_type}/> //
     in.copy(attributes = in.attributes.append(metaData))
   }
 
-  def inputXml(name: String, label: String, value: Any = "", _type: String = "text"
+  def inputXml(id: String, labelAndName: String, value: Any = "", _type: String = "text"
                , inputClasses: String = "", dataSet: Map[String, String] = Map.empty
               ): Elem = {
 
@@ -209,12 +209,12 @@ object DomShell {
     val metaData = dataSet.foldLeft(metaDataAgg)((md, kv) => md.copy(new UnprefixedAttribute("data-" + kv._1, kv._2, Null)))
 
     <div class="form-group">
-      <label id={s"l-" + name} for={s"" + name} class="form-label">
-        {label}
+      <label id={s"l-" + id} for={s"" + labelAndName} class="form-label">
+        {labelAndName}
       </label>{val class_ = "form-control" + (if (inputClasses.nonEmpty) {
       " " + inputClasses
     } else "")
-    val in = <input class={class_} name={s"" + name} id={s"" + name} placeholder={"" + label} value={"" + value} type={_type}/> //
+    val in = <input class={class_} name={s"" + labelAndName} id={s"" + id} placeholder={"" + labelAndName} value={"" + value} type={_type}/> //
     in.copy(attributes = in.attributes.append(metaData))}
     </div>
   }

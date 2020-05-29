@@ -9,6 +9,7 @@ import scala.scalajs.js
 
 case class DistantService[Send  ,Receive,ID ](url: String)
                             (implicit read: js.Any =>Receive,
+                             idToPath : ID => List[String],
                              write:Send => String,
                              user: User
                             ,ex : ExecutionContext
@@ -24,7 +25,7 @@ case class DistantService[Send  ,Receive,ID ](url: String)
   }
 
   def get(id: ID): Future[Receive] = {
-    GET.send(dest = url + "/" + id).map {
+    GET.send(dest = url + "/" + idToPath(id).mkString("/")).map {
       e =>
         e.bodyAsJson match {
           case Some(value) => value
@@ -46,7 +47,7 @@ case class DistantService[Send  ,Receive,ID ](url: String)
   }
 
   def delete(id: ID): Future[Response] = {
-    DELETE.send(dest = url + "/" + id)
+    DELETE.send(dest = url + "/" + idToPath(id).mkString("/"))
   }
 
 }

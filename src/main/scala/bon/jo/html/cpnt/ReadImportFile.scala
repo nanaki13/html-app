@@ -8,7 +8,7 @@ import org.scalajs.dom.raw.{Event, FileReader, HTMLElement, UIEvent}
 
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.xml.Node
+import scala.xml.{Elem, Node}
 
 class ReadImportFile[What](implicit val conv : js.Any => What,obs : ObsFact[What]) extends FinalComponent[Input] {
 
@@ -28,7 +28,7 @@ class ReadImportFile[What](implicit val conv : js.Any => What,obs : ObsFact[What
     }
   }
 
-  override def xml(): Node = <input id={id} type="file" value="Import"></input>
+  override def xml(): Elem = <input id={id} type="file" value="Import"></input>
 
   override def id: String = "import"
 

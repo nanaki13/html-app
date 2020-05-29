@@ -10,4 +10,6 @@ object Types {
 
   type ClickableType = FinalComponent[Div] with Clickable[Div]
   trait ClickableComponent extends FinalComponent[Div] with Clickable[Div]
+
+  trait _Div extends FinalComponent[Div] with GenId with AutoId[Div]
 }

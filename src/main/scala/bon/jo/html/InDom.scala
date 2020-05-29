@@ -4,7 +4,7 @@ import org.scalajs.dom.raw.{HTMLElement, MouseEvent}
 import bon.jo.html.DomShell.ExtendedElement
 import bon.jo.phy.{Obs, OnceObs}
 
-import scala.xml.Node
+import scala.xml.{Elem, Node}
 
 trait InDom[Me <: HTMLElement] {
   _: IdView =>
@@ -28,18 +28,18 @@ trait InDom[Me <: HTMLElement] {
 }
 object InDom{
 
-  class simple[Me<: HTMLElement](node : Node) extends  InDom[Me]() with IdView with XmlHtmlView[Me] {
+  class simple[Me<: HTMLElement](node : Elem) extends  InDom[Me]() with IdView with XmlHtmlView[Me] {
     override def init(parent: HTMLElement): Unit = {
       parent.appendChild(html())
     }
 
     override def id: String = node \@ "id"
 
-    override def xml(): Node = node
+    override def xml(): Elem = node
   }
-  class clk[Me<: HTMLElement](node : Node) extends  simple[Me](node) with Clickable[Me]
-  def apply[Me<: HTMLElement](node : Node): InDom[Me] with XmlHtmlView[Me]= new simple(node)
-  def clk[Me<: HTMLElement](node : Node): InDom[Me]with XmlHtmlView[Me] = new clk(node)
+  class clk[Me<: HTMLElement](node : Elem) extends  simple[Me](node) with Clickable[Me]
+  def apply[Me<: HTMLElement](node : Elem): InDom[Me] with XmlHtmlView[Me]= new simple(node)
+  def clk[Me<: HTMLElement](node : Elem): InDom[Me]with XmlHtmlView[Me] = new clk(node)
 }
 trait Clickable[Me <: HTMLElement] extends InDom[Me] with IdView {
   val obs: OnceObs[MouseEvent] =  Obs.once[MouseEvent]()

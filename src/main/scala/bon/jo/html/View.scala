@@ -1,5 +1,7 @@
 package bon.jo.html
 
+import java.util.UUID
+
 import bon.jo.html.DomShell.$
 import org.scalajs.dom.Element
 import org.scalajs.dom.raw.{HTMLCollection, HTMLElement}
@@ -7,12 +9,14 @@ import org.scalajs.dom.raw.{HTMLCollection, HTMLElement}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js.annotation.JSExport
-import scala.xml.{Node, NodeBuffer}
+import scala.xml.{Elem, MetaData, Node, NodeBuffer, Null, UnprefixedAttribute, XML}
 
 trait IdView {
   def id: String
 }
-
+trait GenId extends IdView{
+  val id = UUID.randomUUID().toString
+}
 trait _View[Root <: HTMLElement] extends InDom[Root] with IdView {
 
 
@@ -41,6 +45,15 @@ trait LeaveView[Root <: HTMLElement] extends InDom[Root] with _View[Root] with I
 
 
 
+}
+trait AutoId[A <: HTMLElement] extends InDom[A] with XmlHtmlView[A] {
+
+  def idXml: Elem
+
+  final override def xml(): Elem ={
+    val ret = idXml
+    ret.copy(attributes = MetaData.concatenate( ret.attributes,new UnprefixedAttribute("id",id,Null)))
+  }
 }
 trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root] {
 
@@ -85,7 +98,7 @@ trait BridgedView[Root <: HTMLElement, _1] extends _View[Root] {
 trait XmlHtmlView[Root <: HTMLElement] extends BridgedView[Root, Node] {
   def conversion(n: Node): Root = BridgeXmlHtml.toElement(n)
 
-  def xml(): Node
+  def xml(): Elem
 
   final override def myFormat(): Node = xml()
 }
