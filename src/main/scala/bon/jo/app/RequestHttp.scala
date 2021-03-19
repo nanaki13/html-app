@@ -13,6 +13,10 @@ object RequestHttp {
 
   val CommonHeaders = List(("Cache-Control","no-cache"),("Content-Type", "application/json"))
   sealed class Method(protected var _okStatus: Int) {
+     self : Method =>
+    def changeStatut( newStatus: Int) = new Method(newStatus){
+      override val name: String = self.name
+    }
 
     def okStatus: Int = _okStatus
 
