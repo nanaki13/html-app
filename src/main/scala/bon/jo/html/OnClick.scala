@@ -1,8 +1,7 @@
 package bon.jo.html
 
-import bon.jo.html.DomShell.{$o, button}
-import org.scalajs.dom.html.{Button, Element, Link}
-import org.scalajs.dom.raw.HTMLElement
+import bon.jo.html.DomShell.button
+import org.scalajs.dom.html.Button
 //
 //trait OnClick[R <: Element] extends EventFromView[R] with InDom[R] with IdView {
 //

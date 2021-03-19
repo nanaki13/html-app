@@ -39,8 +39,11 @@ object DomShell {
 
     def removeFromDom(): raw.Node = element.parentNode.removeChild(element)
 
-    def addChild(node: Node): Unit = {
-      element.appendChild($c(node))
+
+    def addChild[A <: Element](node: Node): A = {
+      val el = $c[A](node)
+      element.appendChild(el)
+      el
     }
 
     def addChild(node: String): Unit = {
@@ -234,10 +237,11 @@ object DomShell {
       ret
     }
 
-    def apply(node: Node): Element = {
-      $c.withInner[Div](node.mkString).children(0)
-    }
 
+
+    def apply[A <: Element](node: Node): A = {
+      $c.withInner[Div](node.mkString).children(0).asInstanceOf[A]
+    }
     def apply[D <: Div](): D = {
       document.createElement("div").asInstanceOf[D]
     }
