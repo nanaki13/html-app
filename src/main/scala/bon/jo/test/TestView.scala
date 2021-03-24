@@ -4,7 +4,7 @@ import bon.jo.app.User
 import bon.jo.html.DomShell.$c
 import org.scalajs.dom.raw
 
-import scala.xml.Elem
+import scala.xml.{Elem, Group, Node, NodeSeq}
 
 case class Memo(id: Integer,title : String, content: String, user: User)
 
@@ -30,18 +30,23 @@ object TestView  {
 }
 
 trait XmlRep[A] {
-  def xml(memo: A): Elem
+  def xml(memo: A): Node
 }
 
 object XmlRep {
+  def +[A,B](xmlRepa: XmlRep[A],xmlRepb: XmlRep[B]) : XmlRep[(A,B)] = {
+    XmlRep[(A,B)]{ t =>
+      val (a,b) = t
+      Group(Seq(xmlRepa.xml(a),xmlRepb.xml(b))) }
+  }
   implicit class ListRep[A : XmlRep ]( seq : Iterable[A] ) {
-    def xml: Iterable[Elem] = seq.map(_.xml)
+    def xml: Iterable[Node] = seq.map(_.xml)
   }
   implicit class PrXml[B](b: B)(implicit tr: XmlRep[B]) {
-    def xml: Elem = tr.xml(b)
+    def xml: Node = tr.xml(b)
     def html: raw.Element = $c(xml)
   }
 
-  def apply[A](a : A => Elem) : XmlRep[A] = b => a(b)
+  def apply[A](a : A => Node) : XmlRep[A] = b => a(b)
 
 }

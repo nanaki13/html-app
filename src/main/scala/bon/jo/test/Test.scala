@@ -68,11 +68,16 @@ case class TestTemplate(user: User) extends Template with XmlTemplate{
     btnInput.html.onclick = _ => {
       val m = Memo(0,tInput.html.value,contentInput.html.value,Visitor)
 
-      val req: Future[raw.Node] =  POST.changeStatut(200).send("http://localhost:8080/memo",js.Dynamic.literal(
+      val req: Future[Unit] =  POST.changeStatut(200).send("http://localhost:8080/memo",js.Dynamic.literal(
         title = m.title,
         content = m.content
       ))(e =>JSON.stringify(e))
-        .map( _ => memos.html.appendChild(m.html))
+        .map( e => {
+          e.body[js.Dynamic]
+            .map(an => +=(Memo(an.id.asInstanceOf[Int],
+              an.title.asInstanceOf[String],an.content.asInstanceOf[String],Visitor)))
+
+        })
 
       req.onComplete {
         case Failure(exception) => println(exception)

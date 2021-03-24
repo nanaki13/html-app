@@ -24,6 +24,10 @@ object RequestHttp {
       new RequestHttp(dest, this, headers).sendBody(writer(body))
     }
 
+    def sendAndMapStatus[R](dest: String, headers: List[(String, String)] = Nil)(mapping : Int => R):Future[R]={
+      new RequestHttp(dest, this, headers).sendAndMapStatus(mapping)
+    }
+
     val name: String = this.toString
 
     def checkStatus(status: Int): Boolean = okStatus == status
@@ -84,6 +88,18 @@ object RequestExeptions {
 
 class RequestHttp(urlDesr: String,
                   method: RequestHttp.Method, headers: Seq[(String, String)] = Nil,json :Boolean =  true) {
+  def sendAndMapStatus[R](mapping: Int => R): Future[R] = {
+    prepare()
+    new Promise[R]((resolve, reject) => {
+      request.send(null)
+      request.onreadystatechange = (_: Event) => {
+        if (request.readyState == XMLHttpRequest.DONE) {
+          mapping(request.status)
+        }
+      }
+    }).toFuture
+  }
+
   val request = new XMLHttpRequest
 
   def open(): Unit = request.open(method.name, urlDesr)
