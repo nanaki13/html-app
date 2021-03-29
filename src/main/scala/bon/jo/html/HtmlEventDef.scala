@@ -29,6 +29,9 @@ trait HtmlEventDef {
     val onblur = HtmlEventDef.blur(html, _)
     val onclick = HtmlEventDef.click(html, _)
     val onkeyup = HtmlEventDef.keyup(html, _)
+    def onAction(doThis: => Unit) = {
+      onkeyup{e => if(e.keyCode == 13) doThis}
+    }
     var onfocus: js.Function1[FocusEvent, _] = _
     var onmouseleave: js.Function1[MouseEvent, _] = _
     var onbeforecut: js.Function1[DragEvent, _] = _

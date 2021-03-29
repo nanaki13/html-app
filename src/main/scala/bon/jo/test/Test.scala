@@ -46,12 +46,12 @@ case class TestTemplate(user: User) extends Template with XmlTemplate{
 
   type dc = DomCpnt[_ <: HTMLElement]
   type dci = DomCpnt[Input]
-  def i : dci = DomCpnt[Input](id => <input id={id}></input>)
-  def b(title : String):dc = DomCpnt[Button](id => <button id={id}>{title}</button>)
+  def i : dci = DomCpnt[Input](<input></input>)
+  def b(title : String):dc = DomCpnt[Button](<button>{title}</button>)
   val tInput : dci = i
   val contentInput  : dci = i
   val btnInput  : dc= b("ajouter")
-  val memos  : dc = DomCpnt[Div](id => <div id={id}>{memo.xml}</div>)
+  val memos  : dc = DomCpnt[Div]( <div>{memo.xml}</div>)
   override def xml: Node = <div id="root">
     {memos.xml}
     titre : {tInput.xml}
