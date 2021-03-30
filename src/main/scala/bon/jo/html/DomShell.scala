@@ -66,6 +66,15 @@ object DomShell {
       element.classList.add(s)
     }
 
+    def isHide = element.style.display == "none"
+    def show(s: Boolean)={
+      if(!s && !isHide){
+        element.setAttribute("old-display",element.style.display)
+        element.style.display = "none"
+      }else if(s && isHide){
+        Option(element.getAttribute("old-display")).foreach(element.style.display = _)
+      }
+    }
 
     def clk(): Obs[MouseEvent] = {
 
