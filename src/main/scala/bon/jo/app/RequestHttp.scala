@@ -14,7 +14,7 @@ object RequestHttp {
   val CommonHeaders = List(("Cache-Control","no-cache"),("Content-Type", "application/json"))
   sealed class Method(protected var _okStatus: Int) {
      self : Method =>
-    def changeStatut( newStatus: Int) = new Method(newStatus){
+    def changeStatut( newStatus: Int): Method = new Method(newStatus){
       override val name: String = self.name
     }
 
@@ -90,7 +90,7 @@ class RequestHttp(urlDesr: String,
                   method: RequestHttp.Method, headers: Seq[(String, String)] = Nil,json :Boolean =  true) {
   def sendAndMapStatus[R](mapping: Int => R): Future[R] = {
     prepare()
-    new Promise[R]((resolve, reject) => {
+    new Promise[R]((_, _) => {
       request.send(null)
       request.onreadystatechange = (_: Event) => {
         if (request.readyState == XMLHttpRequest.DONE) {

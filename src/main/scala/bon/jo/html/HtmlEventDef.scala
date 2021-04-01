@@ -26,10 +26,10 @@ trait HtmlEventDef {
   val html: HTMLElement
 
   object e {
-    val onblur = HtmlEventDef.blur(html, _)
-    val onclick = HtmlEventDef.click(html, _)
-    val onkeyup = HtmlEventDef.keyup(html, _)
-    def onAction(doThis: => Unit) = {
+    val onblur: (FocusEvent => Unit) => Unit = HtmlEventDef.blur(html, _)
+    val onclick: (MouseEvent => Unit) => Unit = HtmlEventDef.click(html, _)
+    val onkeyup: (KeyboardEvent => Unit) => Unit = HtmlEventDef.keyup(html, _)
+    def onAction(doThis: => Unit): Unit = {
       onkeyup{e => if(e.keyCode == 13) doThis}
     }
     var onfocus: js.Function1[FocusEvent, _] = _

@@ -15,7 +15,7 @@ trait IdView {
   def id: String
 }
 trait GenId extends IdView{
-  val id = UUID.randomUUID().toString
+  val id: String = UUID.randomUUID().toString
 }
 trait _View[Root <: HTMLElement] extends InDom[Root] with IdView {
 

@@ -66,8 +66,8 @@ object DomShell {
       element.classList.add(s)
     }
 
-    def isHide = element.style.display == "none"
-    def show(s: Boolean)={
+    def isHide: Boolean = element.style.display == "none"
+    def show(s: Boolean): Unit ={
       if(!s && !isHide){
         element.setAttribute("old-display",element.style.display)
         element.style.display = "none"

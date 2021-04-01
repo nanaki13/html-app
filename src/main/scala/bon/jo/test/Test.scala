@@ -18,7 +18,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.util.{Failure, Success}
 import scala.xml.Node
-class Test(app: Div , template: Template) extends HtmlApp[TestTemplate](template: Template) {
+class Test(template: Template) extends HtmlApp[TestTemplate](template: Template) {
 
 
 
@@ -39,7 +39,7 @@ case class TestTemplate(user: User) extends Template with XmlTemplate{
 
   val memo : ListBuffer[Memo] = ListBuffer()
 
-  def +=(p: Memo) = {
+  def +=(p: Memo): memo.type = {
     memos.html.appendChild(p.html)
     memo += p
   }
@@ -81,7 +81,7 @@ case class TestTemplate(user: User) extends Template with XmlTemplate{
 
       req.onComplete {
         case Failure(exception) => println(exception)
-        case Success(value) =>
+        case Success(_) =>
       }
 
     }
