@@ -60,22 +60,32 @@ object DomShell {
   implicit class NumberFormat(val s: String) {
     def cleanNonNumber: String = s.replaceAll(s"[^0-9,.]", "")
   }
-
-  implicit class ExtendedElement(override val element: org.scalajs.dom.raw.HTMLElement) extends ExtendedNode(element) {
+  implicit class ExtendedElmt(override val element: org.scalajs.dom.raw.Element) extends ExtendedNode(element) {
+    def isHide: Boolean = element.getAttribute("display") ==  "none"
+    def show(s: Boolean): Unit ={
+      if(!s && !isHide){
+        element.setAttribute("old-display",element.getAttribute("display"))
+        element.setAttribute("display","none")
+      }else if(s && isHide){
+        Option(element.getAttribute("old-display")).foreach(element.setAttribute("display" , _))
+      }
+    }
+  }
+  implicit class ExtendedElement(override val element: org.scalajs.dom.raw.HTMLElement) extends ExtendedElmt(element) {
     def css(s: String): Unit = {
       element.classList.add(s)
     }
 
-    def isHide: Boolean = element.style.display == "none"
-    def show(s: Boolean): Unit ={
+
+    override def isHide: Boolean = element.style.display  ==  "none"
+    override def show(s: Boolean): Unit ={
       if(!s && !isHide){
         element.setAttribute("old-display",element.style.display)
-        element.style.display = "none"
+        element.style.display ="none"
       }else if(s && isHide){
-        Option(element.getAttribute("old-display")).foreach(element.style.display = _)
+        Option(element.getAttribute("old-display")).foreach(element.style.display= _)
       }
     }
-
     def clk(): Obs[MouseEvent] = {
 
       val obs = Obs.get[MouseEvent](element.id + "-clk-obs")
