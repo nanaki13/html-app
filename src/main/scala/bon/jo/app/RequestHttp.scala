@@ -90,11 +90,11 @@ class RequestHttp(urlDesr: String,
                   method: RequestHttp.Method, headers: Seq[(String, String)] = Nil,json :Boolean =  true) {
   def sendAndMapStatus[R](mapping: Int => R): Future[R] = {
     prepare()
-    new Promise[R]((_, _) => {
+    new Promise[R]((acc, _) => {
       request.send(null)
       request.onreadystatechange = (_: Event) => {
         if (request.readyState == XMLHttpRequest.DONE) {
-          mapping(request.status)
+          acc(mapping(request.status))
         }
       }
     }).toFuture
