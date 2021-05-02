@@ -10,7 +10,7 @@ trait TokenPlayLoad extends js.Object {
 }
 
 case class User(name: String, role: Role) {
-  def this(tokenPlayLoad: TokenPlayLoad) {
+  def this(tokenPlayLoad: TokenPlayLoad) = {
     this(tokenPlayLoad.name, Role(tokenPlayLoad.role))
   }
 }

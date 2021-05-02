@@ -11,7 +11,7 @@ trait InDom[Me <: HTMLElement] {
   lazy val me: Me = DomShell.$[Me](id)
 
 
-  def init(parent: HTMLElement)
+  def init(parent: HTMLElement):Unit
 
   def isInDom: Boolean = DomShell.$[Me](id) match {
     case null => false

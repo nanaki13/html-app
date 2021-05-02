@@ -1,7 +1,9 @@
 package bon.jo.html
 
+import org.scalajs.dom.html.Button
 import org.scalajs.dom.raw.{Event, FocusEvent, HTMLElement, KeyboardEvent, MouseEvent}
 
+import scala.concurrent.Future
 import scala.scalajs.js
 
 
@@ -36,6 +38,7 @@ trait HtmlEventDef {
   def $Action(doThis: => Unit): Unit = {
     $keyup{e => if(e.keyCode == 13) doThis}
   }
+
 
 
 }
