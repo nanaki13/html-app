@@ -52,6 +52,7 @@ object HTMLDef {
   }
   implicit class HtmlOps[T <: Element](t: T) {
 
+
     object $classSelect extends scala.Dynamic {
 
       def apply(clSel: String): HTMLCollection = t.getElementsByClassName(clSel)
