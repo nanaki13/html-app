@@ -2,6 +2,7 @@ package bon.jo.test
 
 import bon.jo.app.RequestHttp.{GET, POST}
 import bon.jo.app.User.Visitor
+import bon.jo.util.JsonTr
 import bon.jo.app.{HtmlApp, User}
 import bon.jo.game.html.Template
 import bon.jo.game.html.Template.XmlTemplate
@@ -19,29 +20,26 @@ import scala.scalajs.js.JSON
 import scala.util.{Failure, Success}
 import scala.xml.Node
 
-class Test(template: Template) extends HtmlApp[TestTemplate](template: Template) {
+class Test(template: Template) extends HtmlApp[TestTemplate](template: Template):
 
 
-  override def asynStartup(): Future[Unit] = {
+  override def asynStartup(): Future[Unit] =
     GET.get("http://localhost:8080/memo")
       .map(resp => resp.body[js.Array[js.Dynamic]].map(e => {
         e.map(an => Memo(an.id.asInstanceOf[Int],
           an.title.asInstanceOf[String], an.content.asInstanceOf[String], Visitor))
       })).map(m => m.foreach(z => z.foreach(typedTemplate.+=)))
-  }
 
   override def haveAsynStartup: Boolean = true
-}
 
 
-case class TestTemplate(user: User) extends Template with XmlTemplate {
+case class TestTemplate(user: User) extends Template with XmlTemplate:
 
   val memo: ListBuffer[Memo] = ListBuffer()
 
-  def +=(p: Memo): memo.type = {
+  def +=(p: Memo): memo.type =
     memos.html.appendChild(p.html)
     memo += p
-  }
 
   type dc = DomCpnt[_ <: HTMLElement]
   type dci = DomCpnt[Input]
@@ -68,7 +66,7 @@ case class TestTemplate(user: User) extends Template with XmlTemplate {
   </div>
 
 
-  override def init(p: HTMLElement): Unit = {
+  override def init(p: HTMLElement): Unit =
     println(memo)
     btnInput.html.classList.add("btn")
     btnInput.html.classList.add("btn-primary")
@@ -78,7 +76,7 @@ case class TestTemplate(user: User) extends Template with XmlTemplate {
       val req: Future[Unit] = POST.changeStatut(200).send("http://localhost:8080/memo", js.Dynamic.literal(
         title = m.title,
         content = m.content
-      ))(e => JSON.stringify(e)).map(r => {
+      ))(e => JsonTr.string(e)).map(r => {
         val re = r
         val d: Option[js.Dynamic] = re.body[js.Dynamic]
         d.foreach(an => +=(Memo(an.id.asInstanceOf[Int],
@@ -94,7 +92,5 @@ case class TestTemplate(user: User) extends Template with XmlTemplate {
     }
 
 
-  }
-}
 
 

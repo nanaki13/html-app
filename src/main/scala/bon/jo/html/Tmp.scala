@@ -4,15 +4,14 @@ import org.scalajs.dom.raw.{DragEvent, Event, FocusEvent, HTMLElement, KeyboardE
 
 import scala.scalajs.js
 
-class Tmp(html: HTMLElement) {
-  object e {
+class Tmp(html: HTMLElement):
+  object e:
     val onblur: (FocusEvent => Unit) => Unit = HtmlEventDef.blur(html, _)
     val onclick: (MouseEvent => Unit) => Unit = HtmlEventDef.click(html, _)
     val onkeyup: (KeyboardEvent => Unit) => Unit = HtmlEventDef.keyup(html, _)
 
-    def onAction(doThis: => Unit): Unit = {
-      onkeyup { e => if (e.keyCode == 13) doThis }
-    }
+    def onAction(doThis: => Unit): Unit =
+      onkeyup { e => if e.keyCode == 13 then doThis }
 
     var onfocus: js.Function1[FocusEvent, _] = _
     var onmouseleave: js.Function1[MouseEvent, _] = _
@@ -147,6 +146,4 @@ class Tmp(html: HTMLElement) {
     var gotpointercapture: js.Function1[PointerEvent, _] = _
 
     var lostpointercapture: js.Function1[PointerEvent, _] = _
-  }
 
-}

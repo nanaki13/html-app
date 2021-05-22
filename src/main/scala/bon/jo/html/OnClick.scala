@@ -17,6 +17,7 @@ import org.scalajs.dom.html.Button
 //}
 
 trait OnClick extends LeaveView[Button] with InDom[Button]
+
 object OnClick {
   type ButtonType = LeaveView[Button] with InDom[Button] with Clickable[Button]
 

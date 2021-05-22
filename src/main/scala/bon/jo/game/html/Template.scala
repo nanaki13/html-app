@@ -6,21 +6,19 @@ import org.scalajs.dom.html.Div
 
 import scala.xml.Node
 
-trait Template extends InDom[Div] with IdView{
+trait Template extends InDom[Div] with IdView:
 
   //TODO many template from many App -> unique id
   val id: String = "root"
 
-  val user : User
-  def body: String
-}
-object Template{
-  trait XmlTemplate{
-     a :  Template =>
-    def xml : Node
+  val user: User
 
-    final override def body: String = {
+  def body: String
+
+object Template:
+  trait XmlTemplate:
+    a: Template =>
+    def xml: Node
+
+    final override def body: String =
       xml.mkString
-    }
-  }
-}

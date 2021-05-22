@@ -16,7 +16,8 @@ scalaVersion := "3.0.0" // or any other Scala version >= 2.11.12
 
 // This is an application with a main method
 scalaJSUseMainModuleInitializer := true
-scalacOptions ++= Seq("-deprecation", "-feature","-rewrite","-source:3.0-migration")
+scalacOptions ++= Seq("-deprecation", "-feature")
+javacOptions ++= Seq("-encoding", "UTF-8")
 libraryDependencies ++=Seq(( "org.scala-js" %%% "scalajs-dom" % "1.0.0").cross(CrossVersion.for3Use2_13) ,"org.scala-lang.modules" %%% "scala-xml" % "2.0.0",
   "bon.jo" %%% "phy-shared" % "1.0.0-SNAPSHOT"
 )

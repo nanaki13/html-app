@@ -8,24 +8,23 @@ import bon.jo.html.OnClick.ButtonType
 import org.scalajs.dom.html.{Div, Input}
 import org.scalajs.dom.raw.HTMLElement
 
-class TestSocketTemplate(override val user: User = User.Visitor) extends Template {
+class TestSocketTemplate(override val user: User = User.Visitor) extends Template:
   var msg: Div = _
   var urlInput: Input = _
   var sendInput: Input = _
 
-   def updateView(): Unit = {
+  def updateView(): Unit =
     myButton.addTo("submit")
     msg = $[Div]("resp")
     urlInput = $[Input]("url")
     sendInput = $[Input]("send")
-  }
 
   override def body: String = <div id="msg" class="container">
     {inputXml("url", "url", "Const.urlCardGame")}{inputXml("send", "envoi")}<div id="submit">
 
     </div>
     <div>
-      <div  id="resp" class="container">
+      <div id="resp" class="container">
 
       </div>
     </div>
@@ -34,15 +33,12 @@ class TestSocketTemplate(override val user: User = User.Visitor) extends Templat
   val myButton: ButtonType = OnClick("send-button", "Envoi")
 
 
-  def msg(str: String): Unit = {
-    msg.innerHTML = s"""<span class="m-2">reponse</span><pre>"""+ str+"</pre>" + msg.innerHTML
-  }
+  def msg(str: String): Unit =
+    msg.innerHTML = s"""<span class="m-2">reponse</span><pre>""" + str + "</pre>" + msg.innerHTML
 
   case class Param(url: String, send: String)
 
-  def getParam: Param = {
+  def getParam: Param =
     Param(urlInput.value, sendInput.value)
-  }
 
-  override def init(parent : HTMLElement): Unit = {}
-}
+  override def init(parent: HTMLElement): Unit = {}

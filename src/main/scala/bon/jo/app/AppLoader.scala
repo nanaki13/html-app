@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-trait AppLoader {
+trait AppLoader:
 
   /**
    * get the conf for an app and inject html from body template in element.
@@ -22,7 +22,7 @@ trait AppLoader {
    * @param element
    * @return
    */
-  def loadApp(app: String, element: Element, user: User = User.Visitor): HtmlApp[Template] = {
+  def loadApp(app: String, element: Element, user: User = User.Visitor): HtmlApp[Template] =
     val confo: HtmlAppFactory[Template] = conf(app).asInstanceOf[HtmlAppFactory[Template]]
     val htmlFact = confo.htmlAppFactory
     val templateFact = confo.templateFactory
@@ -30,7 +30,7 @@ trait AppLoader {
     element.innerHTML = template.body
     val appDiv: Div = $(template.id)
     val ret = htmlFact(appDiv, template)
-    if (ret.haveAsynStartup) {
+    if ret.haveAsynStartup then
       Logger.log(s"start asynchrone $app")
       (ret.asynStartup() map {
         _ =>
@@ -40,13 +40,11 @@ trait AppLoader {
         case Failure(exception) => Logger.log(s"asynchrone loading $app FAIL  :$exception, ${exception.getMessage}"); throw exception
         case Success(_) => Logger.log(s"asynchrone loading $app OK")
       }
-    } else {
+    else
       Logger.log(s"start normal  , init template  $app")
       template.init(appDiv)
-    }
 
     ret
-  }
 
 
   /**
@@ -54,36 +52,29 @@ trait AppLoader {
    *
    * @param apps
    */
-  def loadsWithUser(apps: List[String])(user: User): List[HtmlApp[Template]] = {
-    for {app <- apps
+  def loadsWithUser(apps: List[String])(user: User): List[HtmlApp[Template]] =
+    for app <- apps
          appInit <- document.getElementsByTagName(app)
-         } yield {
+         yield
       loadApp(app, appInit, user)
-    }
-  }
 
   /**
    * find the apps in html and load it
    *
    * @param apps
    */
-  def loads(apps: List[String]): Unit = {
-    for (app <- apps) {
+  def loads(apps: List[String]): Unit =
+    for app <- apps do
       val appInit = document.getElementsByTagName(app)
-      if (appInit != null && appInit.nonEmpty) {
+      if appInit != null && appInit.nonEmpty then
         loadApp(app, appInit(0))
-      }
-    }
     Anim.start()
-  }
 
-  def loadWithAuth(apps: List[String]): Future[List[HtmlApp[Template]]] = {
+  def loadWithAuth(apps: List[String]): Future[List[HtmlApp[Template]]] =
 
     Auth.doAuth() map loadsWithUser(apps)
 
-  }
 
 
   val conf: Map[String, HtmlAppFactory[_]]
   val apps: List[String]
-}
