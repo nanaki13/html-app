@@ -28,7 +28,7 @@ case class DistantService[Send  ,Receive,ID ](url: String)
     GET.send(dest = url + "/" + idToPath(id).mkString("/")).map {
       e =>
         e.bodyAsJson match {
-          case Some(value) => value
+          case Some(value) =>read(value)
           case None => throw new Exception("no body in response but correct status")
         }
     }

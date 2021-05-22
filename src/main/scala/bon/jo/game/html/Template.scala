@@ -16,7 +16,7 @@ trait Template extends InDom[Div] with IdView{
 }
 object Template{
   trait XmlTemplate{
-     _ :  Template =>
+     a :  Template =>
     def xml : Node
 
     final override def body: String = {

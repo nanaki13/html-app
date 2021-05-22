@@ -12,14 +12,13 @@ enablePlugins(ScalaJSPlugin)
 name := "html-app"
 version := "0.1.2-SNAPSHOT"
 organization := "bon.jo"
-scalaVersion := "2.13.5" // or any other Scala version >= 2.11.12
+scalaVersion := "3.0.0" // or any other Scala version >= 2.11.12
 
 // This is an application with a main method
 scalaJSUseMainModuleInitializer := true
-scalacOptions ++= Seq("-deprecation", "-feature")
-libraryDependencies ++=Seq( "org.scala-js" %%% "scalajs-dom" % "1.0.0" ,"org.scala-lang.modules" %%% "scala-xml" % "2.0.0-M1",
-  //TODO go to phy and restructure to remove html-app dependency (cyclic)
-  "bon.jo" %%% "phy-shared" % "0.1.2-SNAPSHOT"
+scalacOptions ++= Seq("-deprecation", "-feature","-rewrite","-source:3.0-migration")
+libraryDependencies ++=Seq(( "org.scala-js" %%% "scalajs-dom" % "1.0.0").cross(CrossVersion.for3Use2_13) ,"org.scala-lang.modules" %%% "scala-xml" % "2.0.0",
+  "bon.jo" %%% "phy-shared" % "1.0.0-SNAPSHOT"
 )
 
 

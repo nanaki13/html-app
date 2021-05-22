@@ -10,7 +10,7 @@ case class EventAdder(el: HTMLElement, obs: Obs[Event] = Obs.once[Event]()) exte
 
     def applyDynamic(method: String)(): this.type = {
 
-      el.addEventListener(method, obs.newValue)
+      el.addEventListener(method,e => obs.newValue(e))
       this
 
     }

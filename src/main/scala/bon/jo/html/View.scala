@@ -74,8 +74,8 @@ trait NodeView[Root <: HTMLElement] extends InDom[Root] with _View[Root] {
   }
 }
 
-abstract case class View[Root <: HTMLElement](html: Root) extends LeaveView[Root] {
-
+abstract case class View[Root <: HTMLElement](htmlp: Root) extends LeaveView[Root] {
+     def html()=htmlp
 
 }
 

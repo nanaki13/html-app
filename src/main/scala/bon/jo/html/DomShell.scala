@@ -170,7 +170,6 @@ object DomShell {
         in.style.width = conservseWoth.toString + "px"
         //  in.style.width = conservseWoth.toString+"px"
         in.ValueUserEnter(optionRead) foreach {
-          ()
           e =>
             val nVlaue = giveItToMe(e)
             element.clear()
@@ -289,7 +288,7 @@ object DomShell {
   }
 
   lazy val _remove: DomShellEllemnt[Boolean] = {
-    id: String =>
+    (id: String) =>
       val e: HTMLElement = $[HTMLElement](id)
       if (e != null) {
         e.parentNode.removeChild(e)
@@ -300,7 +299,7 @@ object DomShell {
   }
 
   lazy val _removeAll: DomShellEllemnt[Boolean] = {
-    class_ : String =>
+    (class_ : String) =>
       $._class[Element](class_).map(e => {
         e.parentNode.removeChild(e)
       }).nonEmpty
@@ -312,7 +311,7 @@ object DomShell {
    * @return
    */
   def remove: DomShellEllemnt[Boolean] = {
-    id: String =>
+    (id: String) =>
 
       val e: HTMLElement = $[HTMLElement](id)
       if (e != null) {
@@ -336,12 +335,13 @@ object DomShell {
 
   def allOf[R <: Element]: DomShellEllemnt[Iterable[R]] = $._class[R]
 
-  trait DomShellEllemnt[R] extends (String => R) {
-    def <(id: String): R = this apply id
+  @FunctionalInterface
+  trait DomShellEllemnt[R] {
+    def apply(id: String): R
   }
 
-  trait DomShellFunction[P, R] extends (P => R) {
-    def <(p: P): R = this apply p
+  trait DomShellFunction[P, R]  {
+    def apply(p: P): R
   }
 
 }

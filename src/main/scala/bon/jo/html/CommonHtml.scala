@@ -10,7 +10,7 @@ object CommonHtml {
   }
   val closeClass = "closeClass"
   def closeBtn: Span = {
-    (($attr span("type" -> "button", "class" -> s"badge badge-secondary $closeClass", "aria-label" -> "Close")) +=
+    (($attr span List("type" -> "button", "class" -> s"badge badge-secondary $closeClass", "aria-label" -> "Close")  ) +=
       $t("×")
       ).$to
   }

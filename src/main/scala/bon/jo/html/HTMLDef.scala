@@ -163,7 +163,7 @@ object HTMLDef {
   }
 
   object $attr extends scala.Dynamic {
-    def applyDynamic(tagName: String)(htmlL: (Any, Any)*): HTMLElement = {
+    def applyDynamic(tagName: String)(htmlL:List[ (String, String)]): HTMLElement = {
       $c.selectDynamic[HTMLElement](tagName).$attr(htmlL: _ *)
     }
 

@@ -7,7 +7,7 @@ import bon.jo.phy.{Obs, OnceObs}
 import scala.xml.{Elem, Node}
 
 trait InDom[Me <: HTMLElement] {
-  _: IdView =>
+  a: IdView =>
   lazy val me: Me = DomShell.$[Me](id)
 
 
@@ -45,7 +45,7 @@ trait Clickable[Me <: HTMLElement] extends InDom[Me] with IdView {
   val obs: OnceObs[MouseEvent] =  Obs.once[MouseEvent]()
 
   override def init(parent: HTMLElement): Unit = {
-    me.addEventListener("click",obs.newValue)
+    me.addEventListener("click",e => obs.newValue(e.asInstanceOf[MouseEvent]))
   }
   def obsClick(): Obs[MouseEvent] = obs
 }
