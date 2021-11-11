@@ -74,7 +74,7 @@ object HTMLDef:
       else
         None
 
-    def $attr(keyValue: (Any, Any)*): T =
+    def $attr(keyValue: List[(Any, Any)]): T =
       keyValue.foreach(e => {
         t.setAttribute(e._1.toString, e._2.toString)
 
@@ -132,16 +132,16 @@ object HTMLDef:
         ret
 
   object $attrns extends scala.Dynamic:
-    def applyDynamic(tagName: String)(ns: String, htmlL: (Any, Any)*): Element =
-      document.createElementNS(ns, tagName).$attr(htmlL: _ *)
+    def applyDynamic(tagName: String)(ns: String, htmlL: List[(Any , Any)]): Element =
+      document.createElementNS(ns, tagName).$attr(htmlL)
 
   object $attr extends scala.Dynamic:
     def applyDynamic(tagName: String)(htmlL: List[(String, String)]): HTMLElement =
-      $c.selectDynamic[HTMLElement](tagName).$attr(htmlL: _ *)
+      $c.selectDynamic[HTMLElement](tagName).$attr(htmlL)
 
     object t extends scala.Dynamic:
-      def applyDynamic[T <: HTMLElement](tagName: String)(htmlL: (Any, Any)*): T =
-        $c.selectDynamic[T](tagName).$attr(htmlL: _ *)
+      def applyDynamic[T <: HTMLElement](tagName: String)(htmlL:List[(Any, Any)]): T =
+        $c.selectDynamic[T](tagName).$attr(htmlL)
 
   object $t extends scala.Dynamic:
     def apply(str: String): Text = document.createTextNode(str)
@@ -151,14 +151,17 @@ object HTMLDef:
       ret.textContent = textContent
       ret
 
+
+
   object $va extends scala.Dynamic:
-    def applyDynamic(tagName: String)(htmlL: Node*): HTMLElement =
+    def applyDynamic(tagName: String)(htmlL: List[Node]): HTMLElement =
       val ret = $c.selectDynamic[HTMLElement](tagName)
       htmlL.foreach(ret.appendChild)
       ret
 
+
     object t extends scala.Dynamic:
-      def applyDynamic[T <: HTMLElement](tagName: String)(htmlL: Node*): T =
+      def applyDynamic[T <: HTMLElement](tagName: String)(htmlL: List[Node]): T =
         val ret = $c.selectDynamic[T](tagName)
         htmlL.foreach(ret.appendChild)
         ret

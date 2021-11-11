@@ -124,7 +124,7 @@ class RequestHttp(urlDesr: String,
 
     open()
     val makeHeader: ((String, String)) => Unit = request.setRequestHeader _ tupled _
-    //Envoie les informations du header adapt�es avec la requ�te
+
 
     if json then
       RequestHttp.CommonHeaders.foreach(makeHeader)
