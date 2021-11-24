@@ -1,3 +1,10 @@
 **/target
 target
 .idea
+projet/target
+metals.sbt
+.bsp
+.metals
+.vscode
+project/.bloop/
+project/project/
