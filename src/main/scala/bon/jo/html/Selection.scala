@@ -5,10 +5,11 @@ import bon.jo.html.HtmlEventDef.ExH
 import bon.jo.html.HtmlRep.HtmlCpnt
 import org.scalajs.dom.html.Button
 import org.scalajs.dom.raw.HTMLElement
-
+import scala.scalajs.js
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{Future, Promise}
 import scala.collection.View.Single
+import org.scalajs.dom.raw.MouseEvent
 
 
 
@@ -36,7 +37,13 @@ object Selection {
       (a, c, element)
     }
     param.multiple match
-      case Some(value) => value.$click(_ => res.success(buff.toList))
+      case Some(value) => {
+        lazy val clk : js.Function1[MouseEvent, _]  = value.$click(_ => {
+          value.removeEventListener("click",clk)
+          res.success(buff.toList)
+        })
+        clk
+      }
       case None =>
     res.future
 
