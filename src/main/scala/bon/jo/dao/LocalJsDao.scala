@@ -14,7 +14,7 @@ import bon.jo.dao.LocalJsDao.MappedDao
 
 object LocalJsDao:
 
-  given Conversion[Int,js.Any] = e => js.BigInt(e)
+  given Conversion[Int,js.Any] = e => e.toDouble
  // given Conversion[String,js.Any] = e => e
   class MappedDaoImpl[A <: js.Object, B,ID](override val daoJs: LocalJsDao[A,ID])(implicit val executionContext: ExecutionContext,  val mapper: Mapper[B, A]) extends MappedDao[A, B, ID]
 
@@ -171,5 +171,7 @@ trait LocalJsDao[A <: js.Object,ID](using cv : Conversion[ID,js.Any]) extends Da
 
   override def delete(a: ID): FB = transaction("readwrite") flatMap {
     tr =>
-      future[Boolean](tr, t => t.objectStore(name).delete(cv(a)), () => true)
+      println(cv(a))
+  
+      future[Boolean](tr, t => t.objectStore(name).delete( cv(a)), () => true)
   }

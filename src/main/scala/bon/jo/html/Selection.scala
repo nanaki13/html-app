@@ -3,6 +3,7 @@ package bon.jo.html
 import bon.jo.html.HTMLDef._
 import bon.jo.html.HtmlEventDef.ExH
 import bon.jo.html.HtmlRep.HtmlCpnt
+import bon.jo.html.DomBuilder.html.$
 import org.scalajs.dom.html.Button
 import org.scalajs.dom.raw.HTMLElement
 import scala.scalajs.js
@@ -21,9 +22,11 @@ object Selection {
     val buff = ListBuffer[A]()
     val cpnt = list map (e => (e, param.htmlRep.html(e)))
     cpnt map {
-      case (a, c) => (a, c, $l span (c.list))
+      (a, c) => 
+        val b = $.button($.text("add"))
+        (a, c, $l span (c.list :+ $.div($.childs(b))),b)
     } foreach {
-      case (a, c, element) => element.$click { _ =>
+      (a, c, element, button) => button.$click { _ =>
         buff += a
         if param.multiple.isEmpty then
           res.success(buff.toList)
@@ -32,7 +35,7 @@ object Selection {
           target.removeChild(element)
 
       }
-      element.style.cursor = "pointer"
+      
       target += element
       (a, c, element)
     }
