@@ -23,7 +23,7 @@ object Selection {
     val cpnt = list map (e => (e, param.htmlRep.html(e)))
     cpnt map {
       (a, c) => 
-        val b = $.button($.text("add"))
+        val b = SimpleView.bsButton("add")
         (a, c, $l span (c.list :+ $.div($.childs(b))),b)
     } foreach {
       (a, c, element, button) => button.$click { _ =>
