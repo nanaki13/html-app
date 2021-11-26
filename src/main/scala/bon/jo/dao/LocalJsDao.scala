@@ -43,7 +43,8 @@ object LocalJsDao:
   def apply[A <: js.Object, B,ID](jsDao: LocalJsDao[A,ID])(using m: Mapper[B, A], executionContext: ExecutionContext): MappedDao[A, B,ID] =
     new MappedDaoImpl(jsDao)
 
-trait LocalJsDao[A <: js.Object,ID](using cv : Conversion[ID,js.Any]) extends Dao[A, ID] with IndexedDB with Ec:
+
+trait LocalJsDao[A <: js.Object,ID](using cv : Conversion[ID,js.Any],version : IndexedDB.Version) extends Dao[A, ID] with IndexedDB with Ec:
 
   import IndexedDB._
 
@@ -52,7 +53,7 @@ trait LocalJsDao[A <: js.Object,ID](using cv : Conversion[ID,js.Any]) extends Da
 
   def keyPath : String | Array[String]
 
-  def transaction(mode: String): Future[IDBTransaction] = database.map {
+  def transaction(mode: String): Future[IDBTransaction] = database(version.value).map {
     db =>
       db.transaction(js.Array(name), mode)
   }

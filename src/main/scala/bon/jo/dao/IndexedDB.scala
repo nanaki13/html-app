@@ -8,7 +8,11 @@ import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.scalajs.js
 
 object IndexedDB:
- 
+
+  class Version(val value : Int)
+  type V[A] = Version ?=> A
+  def version : V[Version] = summon
+  def versionInt : V[Int] = version.value
   extension ( e: EventTarget)
     def result[A]: A = e.asInstanceOf[js.Dynamic].result.asInstanceOf[A]
   case class DBExeception(val error: ErrorEvent) extends RuntimeException()
@@ -33,11 +37,11 @@ object IndexedDB:
         })
         stores.foreach(createOB)
          
-  val version = 4
+  
  
-  def init(stores : LocalJsDao[_,_] *)(using  ExecutionContext): Future[Unit] =
+  def init( stores : LocalJsDao[_,_] *)(using  ExecutionContext): V[Future[Unit]] =
     val p = Promise[Unit]()
-    val open: IDBOpenDBRequest = db.open("dao",version)
+    val open: IDBOpenDBRequest = db.open("dao",versionInt)
 
     open.onupgradeneeded = f => {
       println("onupgradeneeded")
@@ -56,10 +60,10 @@ object IndexedDB:
 trait IndexedDB {
   val db: IDBFactory = window.indexedDB
   //val stores : Iterable[LocalJsDao[_,_]]
-  def database: Future[IDBDatabase] =
+  def database(version : Int): Future[IDBDatabase] =
     val p = Promise[IDBDatabase]()
     
-    val open: IDBOpenDBRequest = db.open("dao",IndexedDB.version)
+    val open: IDBOpenDBRequest = db.open("dao",version)
   
     open.onsuccess = f => {
       println("succes database")
