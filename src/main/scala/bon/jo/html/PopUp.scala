@@ -18,10 +18,12 @@ object PopUp:
     htmlNode.style.right = "10em"
     htmlNode.style.top = "2em"
     htmlNode.style.paddingRight = "2em"
-    htmlNode.style.maxWidth="20em"
+    htmlNode.style.width="30em"
+    htmlNode.style.height="30em"
     htmlNode._class = "card m-5"
     htmlNode.style.zIndex="1001"
     htmlNode.draggable = true
+    htmlNode.style.overflowY = "scroll"
     htmlNode.$userCanDrag()
     htmlNode
   private def show(htmlNode: HTMLElement): Unit =
@@ -42,7 +44,7 @@ object PopUp:
       if noPopuMessage then
         popCnt.removeFromDom()
     }
-    if popCount>10 then
+    if popCount>5000 then
       popCnt.removeChild( popCnt.children.head)
       popCount -= 1
 
